@@ -213,7 +213,7 @@ fun DoctorScreen(
                             border = androidx.compose.foundation.BorderStroke(1.dp, SillonPalette.Sage.copy(alpha = 0.5f)),
                         ) {
                             Text(
-                                text = "🌿 Feuille saine",
+                                text = "Feuille saine",
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelSmall,
                             )
@@ -234,7 +234,7 @@ fun DoctorScreen(
                             border = androidx.compose.foundation.BorderStroke(1.dp, SillonPalette.Sage.copy(alpha = 0.5f)),
                         ) {
                             Text(
-                                text = "🍂 Alerte Mildiou",
+                                text = "Alerte Mildiou",
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelSmall,
                             )
@@ -255,7 +255,7 @@ fun DoctorScreen(
                             border = androidx.compose.foundation.BorderStroke(1.dp, SillonPalette.Sage.copy(alpha = 0.5f)),
                         ) {
                             Text(
-                                text = "⚪ Feutrage Oïdium",
+                                text = "Feutrage Oïdium",
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelSmall,
                             )
@@ -272,7 +272,7 @@ fun DoctorScreen(
                             border = androidx.compose.foundation.BorderStroke(1.dp, SillonPalette.AlertAmber),
                         ) {
                             Text(
-                                text = "❓ Fond incertain",
+                                text = "Fond incertain",
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = SillonPalette.AlertAmber,
@@ -316,7 +316,7 @@ fun DoctorScreen(
                                 if (res.needsManualTriage) {
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = "⚠️ Garde-fou agronomique : L'IA refuse de deviner au hasard pour éviter un faux traitement. Basculement vers la clé clinique recommandée.",
+                                        text = "Garde-fou agronomique : L'IA refuse de deviner au hasard pour éviter un faux traitement. Basculement vers la clé clinique recommandée.",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = SillonPalette.AlertAmber,
                                         fontWeight = FontWeight.SemiBold,

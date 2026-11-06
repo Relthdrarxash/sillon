@@ -27,14 +27,14 @@ Le présent audit a pour vocation de déconstruire avec rigueur ces cinq paradig
 
 | Critère d'évaluation | PictureThis (Glority) | Planter: Garden Planner | Permapotes (Web/PWA) | Planta / Gardenize | Moon & Garden / Lune | **Sillon (Pilmil Studio)** |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Respect de la vie privée & Traceurs** | ❌ Déplorable (Trackers publicitaires, EXIF photos téléversées, profilage) | ⚠️ Moyen (Traceurs analytiques Google/Firebase, compte obligatoire) | ⚖️ Acceptable (Pas de revente, mais compte cloud centralisé obligatoire) | ❌ Médiocre (Trackers marketing, notifications de rétention agressive) | ❌ Déplorable (Bannières publicitaires invasives, SDKs tiers) | 🟢 **Absolu (Zéro traceur, zéro télémétrie, aucune permission réseau)** |
-| **Fonctionnement 100 % Hors-Ligne** | ❌ Impossible (Triage par vision artificielle hébergée sur cloud) | ⚠️ Partiel (Cache local fragile, blocage lors de synchronisations) | ❌ Instable (PWA sensible à l'éviction de cache par le navigateur mobile) | ⚠️ Partiel (Notifications locales mais synchronisation cloud requise) | ⚠️ Partiel (Publicités nécessitant le réseau, calculs d'éphémérides locaux) | 🟢 **Total (Zéro requête réseau, APK sans permission `INTERNET`, 100 % autonome)** |
-| **Modèle économique & Coût réel** | ❌ Prédateur (30 à 49 €/an, dark patterns de conversion forcée) | ⚠️ Freemium restrictif (1 seul potager gratuit, 24,99 à 29,99 €/an sinon) | ⚖️ Don / Abonnement soutien (Modèle associatif / indépendant bienveillant) | ❌ Abonnement récurrent (35 à 45 €/an pour débloquer le diagnostic) | ❌ Freemium publicitaire (Abonnement pour retirer des bannières criardes) | 🟢 **Éthique & Gratuit (Logiciel Libre GPL-3.0, zéro abonnement, zéro paywall)** |
-| **Planification spatiale en carrés (SFG)** | ❌ Inexistante (Uniquement reconnaissance unitaire) | 🟢 Très bonne interface (Grille SFG interactive et agréable) | ⚖️ Moyenne (Grille web manquant de réactivité tactile sur mobile) | ❌ Inexistante (Simple liste linéaire de pots/planches) | ❌ Inexistante (Simple agenda lunaire temporel) | 🟢 **Native & Fluide (Compose 120 Hz, carrés 30×30 cm, parcelles libres & modulaires)** |
-| **Rigueur agronomique & Bases thermiques** | ❌ Nulle (Aucune prise en compte de la température de base du sol) | ⚠️ Rudimentaire (Dates fixes par zone de rusticité USDA sans dynamique) | ⚖️ Empirique (Calendrier moyen indicatif, sans moteur phénoclimatique) | ❌ Dangereuse (Minuteurs rigides ignorant précipitations et sol) | ❌ Pseudoscience (Zodiaque, lunes ascendantes/descendantes, astrologie) | 🟢 **Haute précision ($T_{\text{base}}$ germination, médiane des dernières gelées, DJC)** |
-| **Matrice de compagnonnage** | ❌ Absente | ⚠️ Binaire superficielle (Icônes vert/rouge sans justification biochimique) | ⚖️ Participative / Folklore (Mélange de données réelles et croyances non vérifiées) | ❌ Absente | ⚠️ Ésotérique (Associations dictées par les éléments astrologiques) | 🟢 **Biologique & Spatiale (Allélopathie, répulsion olfactive, 2D direct/diagonal)** |
-| **Diagnostic phytosanitaire** | ⚠️ Biaisé (Réseaux de neurones confondant carences minérales et champignons) | ❌ Absent | ❌ Absent (Forum communautaire externe uniquement) | ⚠️ Simpliste (QCM sommaire poussant vers l'achat d'engrais partenaires) | ❌ Absent | 🟢 **Clinique & Déterministe (Arbre multicritère Organe × Famille × Symptômes, biocontrôle)** |
-| **Sauvegarde & Souveraineté des données** | ❌ Verrouillée dans le cloud propriétaire | ⚠️ Compte captif (Export propriétaire difficilement exploitable) | ⚠️ Base de données distante liée au compte utilisateur | ❌ Données hébergées sur serveurs distants propriétaires | ❌ Aucun export propre | 🟢 **Fichier JSON local atomique, import/export en un geste, zéro compte** |
+| **Respect de la vie privée & Traceurs** | Déplorable (Trackers publicitaires, EXIF photos téléversées, profilage) | Moyen (Traceurs analytiques Google/Firebase, compte obligatoire) | Acceptable (Pas de revente, mais compte cloud centralisé obligatoire) | Médiocre (Trackers marketing, notifications de rétention agressive) | Déplorable (Bannières publicitaires invasives, SDKs tiers) | **Absolu (Zéro traceur, zéro télémétrie, aucune permission réseau)** |
+| **Fonctionnement 100 % Hors-Ligne** | Impossible (Triage par vision artificielle hébergée sur cloud) | Partiel (Cache local fragile, blocage lors de synchronisations) | Instable (PWA sensible à l'éviction de cache par le navigateur mobile) | Partiel (Notifications locales mais synchronisation cloud requise) | Partiel (Publicités nécessitant le réseau, calculs d'éphémérides locaux) | **Total (Zéro requête réseau, APK sans permission `INTERNET`, 100 % autonome)** |
+| **Modèle économique & Coût réel** | Prédateur (30 à 49 €/an, dark patterns de conversion forcée) | Freemium restrictif (1 seul potager gratuit, 24,99 à 29,99 €/an sinon) | Don / Abonnement soutien (Modèle associatif / indépendant bienveillant) | Abonnement récurrent (35 à 45 €/an pour débloquer le diagnostic) | Freemium publicitaire (Abonnement pour retirer des bannières criardes) | **Éthique & Gratuit (Logiciel Libre GPL-3.0, zéro abonnement, zéro paywall)** |
+| **Planification spatiale en carrés (SFG)** | Inexistante (Uniquement reconnaissance unitaire) | Très bonne interface (Grille SFG interactive et agréable) | Moyenne (Grille web manquant de réactivité tactile sur mobile) | Inexistante (Simple liste linéaire de pots/planches) | Inexistante (Simple agenda lunaire temporel) | **Native & Fluide (Compose 120 Hz, carrés 30×30 cm, parcelles libres & modulaires)** |
+| **Rigueur agronomique & Bases thermiques** | Nulle (Aucune prise en compte de la température de base du sol) | Rudimentaire (Dates fixes par zone de rusticité USDA sans dynamique) | Empirique (Calendrier moyen indicatif, sans moteur phénoclimatique) | Dangereuse (Minuteurs rigides ignorant précipitations et sol) | Pseudoscience (Zodiaque, lunes ascendantes/descendantes, astrologie) | **Haute précision ($T_{\text{base}}$ germination, médiane des dernières gelées, DJC)** |
+| **Matrice de compagnonnage** | Absente | Binaire superficielle (Icônes sans justification biochimique) | Participative / Folklore (Mélange de données réelles et croyances non vérifiées) | Absente | Ésotérique (Associations dictées par les éléments astrologiques) | **Biologique & Spatiale (Allélopathie, répulsion olfactive, 2D direct/diagonal)** |
+| **Diagnostic phytosanitaire** | Biaisé (Réseaux de neurones confondant carences minérales et champignons) | Absent | Absent (Forum communautaire externe uniquement) | Simpliste (QCM sommaire poussant vers l'achat d'engrais partenaires) | Absent | **Clinique & Déterministe (Arbre multicritère Organe × Famille × Symptômes, biocontrôle)** |
+| **Sauvegarde & Souveraineté des données** | Verrouillée dans le cloud propriétaire | Compte captif (Export propriétaire difficilement exploitable) | Base de données distante liée au compte utilisateur | Données hébergées sur serveurs distants propriétaires | Aucun export propre | **Fichier JSON local atomique, import/export en un geste, zéro compte** |
 
 ---
 
@@ -91,14 +91,14 @@ L'analyse phytosanitaire de *PictureThis* repose sur des réseaux de neurones co
 ├───────────────────────────────────────────────────┬──────────────┤
 │  Fonctionnalité                                   │ Évaluation   │
 ├───────────────────────────────────────────────────┼──────────────┤
-│  Interface de grille carrée                       │ ⭐⭐⭐⭐⭐   │
-│  Version gratuite                                 │ ⭐ (1 parc.) │
-│  Modèle économique (24,99 à 29,99 €/an)           │ ⭐⭐         │
-│  Dépendance au compte cloud                       │ ⭐⭐         │
-│  Moteur de compagnonnage biologique               │ ⭐⭐ (Binaire│
-│  Moteur de rotation des cultures                  │ ⭐           │
-│  Diagnostic phytosanitaire                        │ ❌ Inexistant│
-│  Pérénité des données (Export universel JSON)     │ ❌ Aucune    │
+│  Interface de grille carrée                       │ Très bonne   │
+│  Version gratuite                                 │ 1 parcelle   │
+│  Modèle économique (24,99 à 29,99 €/an)           │ Payant       │
+│  Dépendance au compte cloud                       │ Obligatoire  │
+│  Moteur de compagnonnage biologique               │ Binaire      │
+│  Moteur de rotation des cultures                  │ Inexistant   │
+│  Diagnostic phytosanitaire                        │ Inexistant   │
+│  Pérénité des données (Export universel JSON)     │ Aucune       │
 └───────────────────────────────────────────────────┴──────────────┘
 ```
 

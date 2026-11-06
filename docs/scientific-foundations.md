@@ -89,11 +89,11 @@ L'allélopathie négative correspond à la synthèse et à l'excrétion dans le 
 
 | Association | Croyance populaire maraîchère | Réalité biologique & Consensus agronomique (INRAE / FiBL) | Statut dans Sillon |
 |---|---|---|:---:|
-| **Carotte + Oignon / Poireau** | « Les odeurs se repoussent magiquement » | **Validé :** Rupture olfactive documentée contre *Psila rosae* et *Acrolepiopsis assectella*. Complémentarité racinaire (pivotante carotte vs fasciculée alliacée). | ✅ **Synergie majeure** |
-| **Tomate + Basilic** | « Le basilic donne du goût à la tomate sur pied » | **Partiellement révisé :** Aucune modification organoleptique démontrée *in vivo*. En revanche, les COV du basilic (linalol, eugénol) exercent une répulsion modérée des thrips et aleurodes. | ⚠️ **Synergie modérée** (espace & parasitisme) |
-| **Tomate + Pomme de terre** | « Deux bonnes solanacées qui se complètent » | **Invalide & Dangereux :** Transmission épidémique fulgurante du mildiou (*Phytophthora infestans*) et attraction décuplée des doryphores (*Leptinotarsa decemlineata*). | ❌ **Antagonisme critique** (Alerte rouge) |
-| **Fabacées + Solanacées / Brassicacées** | « L'engrais naturel instantané au pied » | **Validé avec nuance :** Évitement de compétition sur l'azote minéral tellurique ; enrichissement réel du profil pour la rotation suivante. | ✅ **Synergie symbiotique** |
-| **Semis selon les constellations lunaires** | « Monter ou descendre selon la lune montante/descendante » | **Réfuté :** Aucune corrélation statistiquement significative observée dans les essais contrôlés randomisés (INRAE, W. Schumacher). La gravité lunaire sur un germe de 1 mg est infinitésimale face aux forces de capillarité matricielle de l'eau du sol ($\Psi_m$). | ⛔ **Exclu de l'application** |
+| **Carotte + Oignon / Poireau** | « Les odeurs se repoussent magiquement » | **Validé :** Rupture olfactive documentée contre *Psila rosae* et *Acrolepiopsis assectella*. Complémentarité racinaire (pivotante carotte vs fasciculée alliacée). | **Validé (Synergie majeure)** |
+| **Tomate + Basilic** | « Le basilic donne du goût à la tomate sur pied » | **Partiellement révisé :** Aucune modification organoleptique démontrée *in vivo*. En revanche, les COV du basilic (linalol, eugénol) exercent une répulsion modérée des thrips et aleurodes. | **Nuancé (Synergie modérée)** |
+| **Tomate + Pomme de terre** | « Deux bonnes solanacées qui se complètent » | **Invalide & Dangereux :** Transmission épidémique fulgurante du mildiou (*Phytophthora infestans*) et attraction décuplée des doryphores (*Leptinotarsa decemlineata*). | **Antagonisme critique (Incompatible)** |
+| **Fabacées + Solanacées / Brassicacées** | « L'engrais naturel instantané au pied » | **Validé avec nuance :** Évitement de compétition sur l'azote minéral tellurique ; enrichissement réel du profil pour la rotation suivante. | **Validé (Synergie symbiotique)** |
+| **Semis selon les constellations lunaires** | « Monter ou descendre selon la lune montante/descendante » | **Réfuté :** Aucune corrélation statistiquement significative observée dans les essais contrôlés randomisés (INRAE, W. Schumacher). La gravité lunaire sur un germe de 1 mg est infinitésimale face aux forces de capillarité matricielle de l'eau du sol ($\Psi_m$). | **Réfuté (Exclu de l'application)** |
 
 ---
 
@@ -273,13 +273,13 @@ Sillon répertorie exclusivement des solutions conformes au cahier des charges d
 │                     BIOCHIMIE DES MODES D'ACTION                          │
 ├───────────────────────────────┬───────────────────────────────────────────┤
 │ Décoction de Prêle            │ Dépôt de silice amorphe (SiO₂) dans les   │
-│ (Equisetum arvense)           │ parois cuticulaires ➔ barrière mécanique  │
+│ (Equisetum arvense)           │ parois cuticulaires -> barrière mécanique │
 ├───────────────────────────────┼───────────────────────────────────────────┤
 │ Bicarbonate de Potassium      │ Choc osmotique + élévation brutale du pH  │
-│ (KHCO₃)                       │ foliaire à 8,3 ➔ lyse des conidies oïdium │
+│ (KHCO₃)                       │ foliaire à 8,3 -> lyse des conidies oïdium│
 ├───────────────────────────────┼───────────────────────────────────────────┤
 │ Cuivre raisonné               │ Dénaturation enzymatique multi-site       │
-│ (Bouillie bordelaise)         │ ➔ Strictement plafonné à < 4 g/m²/an      │
+│ (Bouillie bordelaise)         │ -> Strictement plafonné à < 4 g/m²/an     │
 └───────────────────────────────┴───────────────────────────────────────────┘
 ```
 
@@ -326,7 +326,7 @@ Les principes scientifiques décrits ci-dessus sont transcrits au sein d'une arc
 │                         ROTATION ENGINE                                │
 │ - Analyse de l'historique de parcelle sur n années                     │
 │ - Détection des conflits de même famille botanique (3 à 5 ans)         │
-│ - Vérification de la transition trophique (Gourmandes ➔ Améliorantes)  │
+│ - Vérification de la transition trophique (Gourmandes -> Améliorantes)  │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
 ┌───────────────────────────────────▼────────────────────────────────────┐
