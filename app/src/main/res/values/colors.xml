@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ground">#FAF6F0</color>
+    <color name="sage">#2E6347</color>
+    <color name="terracotta">#A85532</color>
+    <color name="peat">#161A14</color>
+    <color name="icon_bg">#2E6347</color>
+    <color name="icon_fg">#FAF6F0</color>
+</resources>

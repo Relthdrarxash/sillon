@@ -1,0 +1,19 @@
+Planifiez, cultivez et récoltez votre potager en harmonie avec les saisons. Sillon est un compagnon agronomique 100% hors-ligne conçu pour les jardiniers du dimanche comme pour les passionnés de permaculture.
+
+FONCTIONNALITÉS CLÉS
+
+• Calendrier agronomique personnalisé : semis au chaud, semis direct, repiquage et récoltes calculés automatiquement selon la date de dernière gelée de votre région.
+• Compagnonnage végétal vivant : identifiez instantanément les associations bénéfiques (stimulants de croissance, répulsifs naturels) et évitez les antagonismes allélopathiques entre vos légumes.
+• Planificateur de parcelles et carrés potagers : organisez vos planches de culture, suivez l'occupation de vos parcelles et optimisez l'espace sans vous perdre.
+• Rotation raisonnée des cultures : préservez la fertilité de votre sol et limitez les maladies telluriques grâce au moteur de rotation des familles botaniques sur 4 ans.
+• Diagnostic des plantes et soins naturels : observez les symptômes sur vos feuilles ou tiges, identifiez les maladies courantes (mildiou, oïdium, cul noir, ravageurs) et appliquez des remèdes biologiques (purins, décoctions, savon noir).
+• Encyclopédie potagère complète : fiches détaillées pour chaque légume (températures de germination, espacements, besoins en eau, exposition au soleil et conseils de culture).
+
+VOS DONNÉES RESTENT CHEZ VOUS
+
+• Aucun compte requis, aucune publicité, aucun traceur.
+• L'application ne demande pas la permission Internet : absolument rien ne quitte votre téléphone.
+• Données de votre potager sauvegardées localement.
+• Gratuite et libre (GPL-3.0) : le code est transparent, auditable et respectueux de ses utilisateurs.
+
+Code source : https://github.com/pilmil/sillon

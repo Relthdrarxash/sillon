@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Sillon</string>
+    <string name="app_tagline">Potager vivant &amp; calendrier agronomique</string>
+    <string name="nav_dashboard">Aujourd\'hui</string>
+    <string name="nav_garden">Parcelles</string>
+    <string name="nav_catalog">Encyclopédie</string>
+    <string name="nav_doctor">Diagnostic</string>
+    <string name="nav_settings">Réglages</string>
+</resources>

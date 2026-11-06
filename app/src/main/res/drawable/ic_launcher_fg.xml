@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Courbes des sillons du sol -->
+    <path
+        android:strokeColor="#FAF6F0"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 24,78 C 40,74 68,74 84,78" />
+    <path
+        android:strokeColor="#FAF6F0"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 20,86 C 42,80 66,80 88,86" />
+
+    <!-- Tige du jeune plant émergeant du sillon -->
+    <path
+        android:strokeColor="#FAF6F0"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 54,78 C 54,58 54,46 54,42" />
+
+    <!-- Feuille gauche (cotylédon / feuille vivace) -->
+    <path
+        android:fillColor="#FAF6F0"
+        android:pathData="M 54,54 C 44,52 36,44 38,34 C 48,34 54,44 54,54 Z" />
+
+    <!-- Feuille droite -->
+    <path
+        android:fillColor="#FAF6F0"
+        android:pathData="M 54,48 C 64,44 72,36 70,26 C 60,26 54,38 54,48 Z" />
+</vector>
