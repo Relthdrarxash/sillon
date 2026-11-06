@@ -127,7 +127,7 @@ The output APK will be generated at `app/build/outputs/apk/debug/app-debug.apk`.
 
 To read the in-depth literature review of allelopathic interactions (alpha-terthienyl exudation, VOC olfactory masking, Rhizobium nitrogenase biochemistry, juglone cytotoxicity), mathematical models of Growing Degree Days (GDD), and organic biocontrol protocols (horsetail silica, potassium bicarbonate), read the scientific dossier:
 
-👉 **[Read the Scientific Foundations of Sillon (docs/scientific-foundations.md)](docs/scientific-foundations.md)**
+**[Read the Scientific Foundations of Sillon (docs/scientific-foundations.md)](docs/scientific-foundations.md)**
 
 ---
 

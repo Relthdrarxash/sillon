@@ -127,7 +127,7 @@ L'exécutable généré sera disponible dans `app/build/outputs/apk/debug/app-de
 
 Pour consulter la revue bibliographique complète des mécanismes allélopathiques (sécrétions d'alpha-terthiényle, confusion olfactive par COV, biochimie de la nitrogénase chez les Fabacées, toxicité de la juglone), l'explication mathématique des Degrés Jours de Croissance ($DJC$) et les protocoles de biocontrôle (silice de prêle, bicarbonate de potassium), référez-vous au dossier scientifique :
 
-👉 **[Consulter les Fondements Scientifiques de Sillon (docs/scientific-foundations.md)](docs/scientific-foundations.md)**
+**[Consulter les Fondements Scientifiques de Sillon (docs/scientific-foundations.md)](docs/scientific-foundations.md)**
 
 ---
 
