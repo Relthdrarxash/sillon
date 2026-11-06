@@ -1,0 +1,27 @@
+{
+  "model_version": "1.0.0",
+  "quantization": "INT8",
+  "input_shape": [
+    1,
+    224,
+    224,
+    3
+  ],
+  "classes": [
+    "healthy",
+    "mildew",
+    "powdery_mildew",
+    "blossom_end_rot",
+    "aphids_damage",
+    "allium_rust",
+    "cabbage_caterpillar",
+    "colorado_beetle",
+    "alternaria",
+    "botrytis",
+    "carrot_fly",
+    "flea_beetle",
+    "slug_damage",
+    "hard_negative_garden"
+  ],
+  "confidence_threshold": 0.65
+}

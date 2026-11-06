@@ -1,0 +1,55 @@
+{
+  "classes": [
+    "healthy",
+    "mildew",
+    "powdery_mildew",
+    "blossom_end_rot",
+    "aphids_damage",
+    "allium_rust",
+    "cabbage_caterpillar",
+    "colorado_beetle",
+    "alternaria",
+    "botrytis",
+    "carrot_fly",
+    "flea_beetle",
+    "slug_damage",
+    "hard_negative_garden"
+  ],
+  "class_to_idx": {
+    "healthy": 0,
+    "mildew": 1,
+    "powdery_mildew": 2,
+    "blossom_end_rot": 3,
+    "aphids_damage": 4,
+    "allium_rust": 5,
+    "cabbage_caterpillar": 6,
+    "colorado_beetle": 7,
+    "alternaria": 8,
+    "botrytis": 9,
+    "carrot_fly": 10,
+    "flea_beetle": 11,
+    "slug_damage": 12,
+    "hard_negative_garden": 13
+  },
+  "counts": {
+    "healthy": 0,
+    "mildew": 0,
+    "powdery_mildew": 0,
+    "blossom_end_rot": 0,
+    "aphids_damage": 0,
+    "allium_rust": 0,
+    "cabbage_caterpillar": 0,
+    "colorado_beetle": 0,
+    "alternaria": 0,
+    "botrytis": 0,
+    "carrot_fly": 0,
+    "flea_beetle": 0,
+    "slug_damage": 0,
+    "hard_negative_garden": 0
+  },
+  "splits": {
+    "train": [],
+    "val": [],
+    "test": []
+  }
+}

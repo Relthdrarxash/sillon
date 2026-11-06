@@ -56,4 +56,28 @@ class EdgeVisionClassifierTest {
         val result = classifier.analyzePixels(pixels, 100, 100)
         assertTrue("En cas d'ambiguïté visuelle, le système doit basculer vers le triage manuel", result.needsManualTriage)
     }
+
+    @Test
+    fun testLateBlightMildewDetection() {
+        // Crée une image factice avec taches nécrotiques brunes huileuses typiques du mildiou
+        val pixels = IntArray(100 * 100)
+        for (x in 0 until 100) {
+            for (y in 0 until 100) {
+                val color = if (x < 25) {
+                    // Brun nécrotique (r=90, g=55, b=30)
+                    EdgeVisionClassifier.rgb(90, 55, 30)
+                } else {
+                    // Vert limbe
+                    EdgeVisionClassifier.rgb(40, 140, 40)
+                }
+                pixels[y * 100 + x] = color
+            }
+        }
+
+        val result = classifier.analyzePixels(pixels, 100, 100)
+        val mildiouPred = result.predictions.find { it.disease.id == "mildiou" }
+        assertTrue("Le mildiou doit être détecté en présence de nécrose brune", mildiouPred != null)
+        assertTrue("La confiance du mildiou doit être supérieure à 60%", mildiouPred!!.confidence >= 0.60f)
+        assertFalse("La feuille ne doit pas être qualifiée de saine", result.isHealthy)
+    }
 }

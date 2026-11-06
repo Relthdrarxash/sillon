@@ -1,0 +1,11 @@
+# ML temporary and checkpoint files
+dataset_raw/
+sample_data/
+checkpoints/
+saved_model/
+*.pt
+*.onnx
+*.tflite
+*.log
+__pycache__/
+.ipynb_checkpoints/
