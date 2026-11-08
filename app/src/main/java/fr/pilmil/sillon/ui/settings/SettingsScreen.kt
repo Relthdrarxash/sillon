@@ -19,11 +19,14 @@ import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,6 +50,10 @@ fun SettingsScreen(
     onExportJson: () -> Unit = {},
     onImportJson: () -> Unit = {},
     onExportCsv: () -> Unit = {},
+    departmentLabel: String? = null,
+    onPickDepartment: () -> Unit = {},
+    remindersOn: Boolean = false,
+    onRemindersChange: (Boolean) -> Unit = {},
 ) {
     val monthNames = listOf(
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -103,7 +110,7 @@ fun SettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "En France métropolitaine, la date médiane se situe entre mi-mars (zone méditerranéenne) et mi-mai (Saints de Glace en plaine / montagne). Tous vos rappels de semis sont calculés par rapport à ce jour J.",
+                        text = "En France métropolitaine, la date médiane se situe entre mi-mars (zone méditerranéenne) et mi-mai (Saints de Glace en plaine / montagne). Tous les travaux et rappels de semis sont calculés par rapport à ce jour J.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 20.sp,
@@ -131,6 +138,44 @@ fun SettingsScreen(
                             modifier = Modifier.weight(1f),
                         )
                     }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    SillonOutlinedButton(
+                        text = departmentLabel?.let { "Département : $it" } ?: "Choisir mon département",
+                        icon = Icons.Filled.Place,
+                        onClick = onPickDepartment,
+                    )
+                }
+            }
+        }
+
+        // Section Rappels de semis
+        item {
+            SillonCard(
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                borderColor = MaterialTheme.colorScheme.outline,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.NotificationsActive,
+                        contentDescription = null,
+                        tint = SillonPalette.Sage,
+                        modifier = Modifier.size(24.dp),
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Rappels de semis",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = "Le samedi matin, quand des semis ou plantations s'ouvrent dans la quinzaine.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Switch(checked = remindersOn, onCheckedChange = onRemindersChange)
                 }
             }
         }
@@ -217,8 +262,8 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = "• Aucune permission Internet dans le manifeste Android.\n" +
-                               "• Zéro traçeur, zéro SDK publicitaire, zéro analyse de comportement.\n" +
-                               "• Modèle agronomique et inférence de maladie 100% exécutés localement sur votre processeur.\n" +
+                               "• Zéro traceur, zéro SDK publicitaire, zéro analyse de comportement.\n" +
+                               "• Calendrier, associations et diagnostic 100 % calculés sur votre téléphone.\n" +
                                "• Logiciel libre sous licence GNU GPLv3.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface,
