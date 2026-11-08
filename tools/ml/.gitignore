@@ -10,3 +10,4 @@ saved_model/
 __pycache__/
 .ipynb_checkpoints/
 out/
+plantdoc_cache/
