@@ -264,7 +264,7 @@ fun SettingsScreen(
                         text = "• Aucune permission Internet dans le manifeste Android.\n" +
                                "• Zéro traceur, zéro SDK publicitaire, zéro analyse de comportement.\n" +
                                "• Calendrier, associations et diagnostic 100 % calculés sur votre téléphone.\n" +
-                               "• Logiciel libre sous licence GNU GPLv3.",
+                               "• Logiciel libre sous licence Mozilla Public License 2.0 (MPL-2.0).",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 22.sp,

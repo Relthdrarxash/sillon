@@ -3,7 +3,7 @@
 **Français** · [English](README.en.md)
 
 [![Build](https://img.shields.io/badge/Build-Passing-2e7d32.svg)](https://github.com/Relthdrarxash/sillon)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](app/src/main/AndroidManifest.xml)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen.svg)](app/build.gradle.kts)
 
@@ -57,7 +57,7 @@ Comme l'ensemble des créations de **Pilmil Studio**, Sillon est conçu selon un
 - **0 traceur, 0 publicité, 0 télémétrie :** Aucun kit d'analyse (Google Analytics, Firebase, etc.) n'est embarqué dans le code binaire.
 - **Données souveraines & formats ouverts :** Votre potager vous appartient. Les données sont enregistrées localement dans un fichier JSON clair et accessible (`sillon_garden.json`).
 - **Sauvegarde & Restauration 1-tap :** Exportation et réimportation instantanées en JSON et au format tableur CSV (compatible LibreOffice Calc et Microsoft Excel) via le Storage Access Framework (SAF) d'Android.
-- **Bien commun libre :** Publié sous licence [GNU GPL v3.0](LICENSE).
+- **Bien commun libre :** Publié sous licence [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 ---
 
@@ -144,9 +144,7 @@ Sillon s'inscrit dans la démarche des applications d'intérêt général de **P
 
 ## Licence
 
-Sillon est un logiciel libre distribué sous licence **GNU General Public License v3.0** ([GNU GPLv3](LICENSE)). Vous êtes libre de l'utiliser, de l'étudier, de le modifier et de le redistribuer, sous réserve de maintenir toute version dérivée sous cette même licence libre et avec son code source complet.
-
-Une [permission additionnelle](LICENSE-EXCEPTION.md) (article 7 de la GPL) autorise la distribution par les magasins d'applications, App Store compris, tant que le code source reste disponible sous la même licence.
+Sillon est un logiciel libre distribué sous licence **[Mozilla Public License 2.0](LICENSE)** (MPL-2.0) : vous pouvez l'utiliser, l'étudier, le modifier et le redistribuer ; les fichiers que vous modifiez doivent rester publiés sous la même licence, avec leur code source.
 
 ---
 

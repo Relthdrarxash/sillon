@@ -14,6 +14,6 @@ VOS DONNÉES RESTENT CHEZ VOUS
 • Aucun compte requis, aucune publicité, aucun traceur.
 • L'application ne demande pas la permission Internet : absolument rien ne quitte votre téléphone.
 • Données de votre potager sauvegardées localement.
-• Gratuite et libre (GPL-3.0) : le code est transparent, auditable et respectueux de ses utilisateurs.
+• Gratuite et libre (MPL-2.0) : le code est transparent, auditable et respectueux de ses utilisateurs.
 
 Code source : https://github.com/pilmil/sillon

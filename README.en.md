@@ -3,7 +3,7 @@
 [Français](README.md) · **English**
 
 [![Build](https://img.shields.io/badge/Build-Passing-2e7d32.svg)](https://github.com/Relthdrarxash/sillon)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](app/src/main/AndroidManifest.xml)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen.svg)](app/build.gradle.kts)
 
@@ -57,7 +57,7 @@ Like all applications created by **Pilmil Studio**, Sillon follows a strict ethi
 - **0 trackers, 0 telemetry, 0 ads:** Completely free of tracking SDKs (no Firebase, no Google Analytics, no third-party ad libraries).
 - **Sovereign, open data:** Your garden data belongs exclusively to you. Stored locally in human-readable JSON (`sillon_garden.json`).
 - **1-tap backup & restore:** Seamless JSON and CSV spreadsheet exports/imports via Android's native Storage Access Framework (SAF).
-- **Free & Open Source:** Published under the [GNU GPL v3.0](LICENSE) license.
+- **Free & Open Source:** Published under the [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 ---
 
@@ -144,9 +144,7 @@ Sillon is part of the digital commons initiative by **Pilmil Studio**:
 
 ## License
 
-Sillon is free software distributed under the **GNU General Public License v3.0** ([GNU GPLv3](LICENSE)). You are free to inspect, run, modify, and redistribute it, provided that all derivative works remain open source under the same license terms.
-
-An [additional permission](LICENSE-EXCEPTION.md) (GPL section 7) allows distribution through app stores, including the Apple App Store, as long as the source code remains available under the same license.
+Sillon is free software distributed under the **[Mozilla Public License 2.0](LICENSE)** (MPL-2.0): you can use, study, modify and redistribute it; files you modify must stay under the same license, with their source code.
 
 ---
 
