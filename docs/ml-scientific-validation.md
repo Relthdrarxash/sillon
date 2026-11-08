@@ -3,7 +3,7 @@
 > **Document de référence agronomique & méthodologique**  
 > *Auteur : Pilmil Studio / Sillon Core Engineering*  
 > *Statut : Spécification & Protocole d'audit officiel v1.0*  
-> *Licence : AGPLv3*
+> *Licence : Mozilla Public License 2.0 (MPL-2.0)*
 
 ---
 

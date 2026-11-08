@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pousse stylisée, monochrome, pour la barre d'état. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M11,21V13.9C8.2,13.4 6,11 6,8V6h1c2.5,0 4.6,1.5 5.5,3.6C13.4,7.5 15.5,6 18,6h1v2c0,3 -2.2,5.4 -5,5.9V21h-3z" />
+</vector>

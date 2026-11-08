@@ -1,8 +1,6 @@
 package fr.pilmil.sillon.ui.dashboard
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,53 +14,52 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocalFlorist
 import androidx.compose.material.icons.filled.Spa
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.pilmil.sillon.engine.DashboardPlan
+import fr.pilmil.sillon.engine.FrostStatus
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.theme.SillonPalette
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-data class DashboardTaskItem(
-    val vegetableName: String,
-    val actionType: String,
-    val details: String,
-    val icon: ImageVector,
-    val badgeColor: Color,
-    val textColor: Color,
-)
+private val dayMonth: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale.FRENCH)
 
+/**
+ * Accueil : les travaux de la quinzaine calculés à partir de la date de gelée du jardin,
+ * et non une liste figée. En morte-saison, on annonce la date des prochains semis.
+ */
 @Composable
 fun DashboardScreen(
-    frostDateDescription: String = "15 mai (Saintes Glaces)",
-    daysUntilFrost: Int = -12,
+    plan: DashboardPlan,
+    placeLabel: String?,
+    tip: Pair<String, String>?,
     onNavigateToGarden: () -> Unit = {},
     onNavigateToCatalog: () -> Unit = {},
-    onNavigateToDoctor: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
 ) {
     LazyColumn(
         modifier = Modifier
@@ -72,7 +69,6 @@ fun DashboardScreen(
         contentPadding = PaddingValues(top = 20.dp, bottom = 100.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // En-tête artisan
         item {
             Column(modifier = Modifier.padding(bottom = 8.dp)) {
                 Text(
@@ -80,148 +76,105 @@ fun DashboardScreen(
                     style = MaterialTheme.typography.displaySmall,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.semantics { heading() },
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Calendrier phénologique calculé sur vos dernières gelées locales.",
+                    text = "Calculé pour votre date de dernières gelées.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
 
-        // Carte Climat & Gelée locale
-        item {
-            SillonCard(
-                backgroundColor = MaterialTheme.colorScheme.surface,
-                borderColor = MaterialTheme.colorScheme.outline,
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(SillonPalette.SageContainer),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.AcUnit,
-                            contentDescription = null,
-                            tint = SillonPalette.SageDark,
-                            modifier = Modifier.size(24.dp),
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(14.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Dernières gelées repères",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = frostDateDescription,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    SillonBadge(
-                        text = if (daysUntilFrost >= 0) "Dans ${daysUntilFrost}j" else "Passées (${-daysUntilFrost}j)",
-                        containerColor = if (daysUntilFrost >= 0) SillonPalette.AlertContainer else SillonPalette.SageContainer,
-                        textColor = if (daysUntilFrost >= 0) SillonPalette.AlertAmber else SillonPalette.SageDark,
-                    )
-                }
-            }
-        }
+        item { FrostCard(plan.frost, placeLabel, onOpenSettings) }
 
-        // Section Semis & Travaux de la quinzaine
         item {
             Text(
-                text = "Travaux recommandés (quinzaine)",
+                text = "Travaux de la quinzaine",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .semantics { heading() },
             )
         }
 
-        // 4 Catégories agronomiques
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                TaskCategoryCard(
-                    title = "Semis sous abri & chaleur",
-                    subtitle = "Tomates, piments, aubergines, poivrons",
-                    badgeText = "Châssis / Godet",
-                    icon = Icons.Filled.Spa,
-                    containerColor = Color(0xFFF9F4EB),
-                    accentColor = SillonPalette.Terracotta,
-                    onClick = onNavigateToCatalog,
-                )
+        if (plan.isEmpty) {
+            item { RestCard(plan.nextWorkFrom, onNavigateToCatalog) }
+        }
 
-                TaskCategoryCard(
-                    title = "Semis en pleine terre",
-                    subtitle = "Carottes hâtives, fèves, pois ridés, radis",
-                    badgeText = "Plein champ",
-                    icon = Icons.Filled.Grass,
-                    containerColor = Color(0xFFEDF4ED),
-                    accentColor = SillonPalette.Sage,
-                    onClick = onNavigateToCatalog,
-                )
-
-                TaskCategoryCard(
-                    title = "Repiquage & plantations",
-                    subtitle = "Oignons de printemps, laitues de printemps",
-                    badgeText = "Carrés potagers",
-                    icon = Icons.Filled.LocalFlorist,
-                    containerColor = Color(0xFFF3EFE7),
-                    accentColor = SillonPalette.PeatInk,
-                    onClick = onNavigateToGarden,
-                )
-
-                TaskCategoryCard(
-                    title = "Récolte en cours",
-                    subtitle = "Mâche d'hiver, poireaux perpétuels, épinards",
-                    badgeText = "À cueillir",
+        if (plan.gardenHarvest.isNotEmpty()) {
+            item {
+                TaskCard(
+                    title = "À récolter dans vos parcelles",
+                    names = plan.gardenHarvest.map { "${it.vegetable.name} (${it.parcelName})" },
                     icon = Icons.Filled.Eco,
-                    containerColor = Color(0xFFEBF2F4),
-                    accentColor = SillonPalette.SynergyBlue,
+                    accent = SillonPalette.SynergyBlue,
                     onClick = onNavigateToGarden,
                 )
             }
         }
+        if (plan.sowIndoors.isNotEmpty()) {
+            item {
+                TaskCard(
+                    title = "Semis sous abri, au chaud",
+                    names = plan.sowIndoors.map { it.vegetable.name },
+                    icon = Icons.Filled.Spa,
+                    accent = SillonPalette.Terracotta,
+                    onClick = onNavigateToCatalog,
+                )
+            }
+        }
+        if (plan.sowOutdoors.isNotEmpty()) {
+            item {
+                TaskCard(
+                    title = "Semis en pleine terre",
+                    names = plan.sowOutdoors.map { it.vegetable.name },
+                    icon = Icons.Filled.Grass,
+                    accent = SillonPalette.Sage,
+                    onClick = onNavigateToCatalog,
+                )
+            }
+        }
+        if (plan.transplant.isNotEmpty()) {
+            item {
+                TaskCard(
+                    title = "Repiquage et plantations",
+                    names = plan.transplant.map { it.vegetable.name },
+                    icon = Icons.Filled.LocalFlorist,
+                    accent = SillonPalette.SageDark,
+                    onClick = onNavigateToGarden,
+                )
+            }
+        }
+        if (plan.harvest.isNotEmpty()) {
+            item {
+                TaskCard(
+                    title = "Saison de récolte",
+                    names = plan.harvest.map { it.vegetable.name },
+                    icon = Icons.Filled.Eco,
+                    accent = SillonPalette.SynergyBlue,
+                    onClick = onNavigateToCatalog,
+                )
+            }
+        }
 
-        // Carte Règle d'or permaculture / Conseil agronomique du moment
-        item {
-            SillonCard(
-                backgroundColor = SillonPalette.SageContainer.copy(alpha = 0.5f),
-                borderColor = SillonPalette.Sage.copy(alpha = 0.3f),
-            ) {
-                Row(verticalAlignment = Alignment.Top) {
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = null,
-                        tint = SillonPalette.SageDark,
-                        modifier = Modifier.size(24.dp),
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column {
-                        Text(
-                            text = "Règle des associations vivantes",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = SillonPalette.SageDark,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Pour protéger vos carottes de la mouche de la carotte (Psila rosae), intercalez toujours des rangs d'oignons ou de poireaux : leurs odeurs alliacées masquent la présence des Apiacées.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            lineHeight = 20.sp,
-                        )
+        tip?.let { (title, text) ->
+            item {
+                SillonCard(
+                    backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                    borderColor = MaterialTheme.colorScheme.outline,
+                ) {
+                    Row(verticalAlignment = Alignment.Top) {
+                        Icon(Icons.Filled.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp)
+                        }
                     }
                 }
             }
@@ -230,64 +183,124 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun TaskCategoryCard(
+private fun FrostCard(frost: FrostStatus, placeLabel: String?, onOpenSettings: () -> Unit) {
+    SillonCard(
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        borderColor = MaterialTheme.colorScheme.outline,
+    ) {
+        Column {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                IconBubble(Icons.Filled.AcUnit, SillonPalette.Sage)
+                Spacer(modifier = Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Dernières gelées repères",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    val date = when (frost) {
+                        is FrostStatus.Upcoming -> frost.date
+                        is FrostStatus.Passed -> frost.date
+                    }
+                    Text(
+                        text = listOfNotNull(dayMonth.format(date), placeLabel).joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                when (frost) {
+                    is FrostStatus.Upcoming -> SillonBadge(
+                        text = if (frost.days == 0L) "Aujourd'hui" else "Dans ${frost.days} j",
+                        containerColor = SillonPalette.AlertContainer,
+                        textColor = SillonPalette.AlertAmber,
+                    )
+                    is FrostStatus.Passed -> SillonBadge(
+                        text = "Passées",
+                        containerColor = SillonPalette.SageContainer,
+                        textColor = SillonPalette.SageDark,
+                    )
+                }
+            }
+            if (placeLabel == null) {
+                TextButton(onClick = onOpenSettings) { Text("Ajuster à mon département") }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RestCard(nextWorkFrom: LocalDate?, onNavigateToCatalog: () -> Unit) {
+    SillonCard(
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        borderColor = MaterialTheme.colorScheme.outline,
+    ) {
+        Column {
+            Text(
+                text = "Le potager se repose",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = if (nextWorkFrom != null) {
+                    "Aucun semis ni plantation cette quinzaine. Les prochains travaux commencent vers le ${dayMonth.format(nextWorkFrom)}. D'ici là : paillage, compost et préparation des planches."
+                } else {
+                    "Aucun semis ni plantation cette quinzaine. C'est le moment du paillage, du compost et de la préparation des planches."
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 20.sp,
+            )
+            TextButton(onClick = onNavigateToCatalog) { Text("Préparer la saison dans le catalogue") }
+        }
+    }
+}
+
+@Composable
+private fun TaskCard(
     title: String,
-    subtitle: String,
-    badgeText: String,
+    names: List<String>,
     icon: ImageVector,
-    containerColor: Color,
-    accentColor: Color,
+    accent: Color,
     onClick: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(14.dp),
-        color = containerColor,
-        border = androidx.compose.foundation.BorderStroke(1.dp, SillonPalette.FurrowLine),
+    val shown = names.take(5)
+    val more = names.size - shown.size
+    SillonCard(
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        borderColor = MaterialTheme.colorScheme.outline,
+        onClick = onClick,
     ) {
-        Row(
-            modifier = Modifier
-                .padding(14.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(accentColor.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = accentColor,
-                    modifier = Modifier.size(22.dp),
-                )
-            }
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            IconBubble(icon, accent)
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Bold,
-                )
+                Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = subtitle,
+                    text = shown.joinToString(", ") + if (more > 0) " et $more autre${if (more > 1) "s" else ""}" else "",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
-            SillonBadge(
-                text = badgeText,
-                containerColor = Color.White.copy(alpha = 0.8f),
-                textColor = accentColor,
-            )
+            SillonBadge(text = "${names.size}", containerColor = accent.copy(alpha = 0.15f), textColor = accent)
         }
+    }
+}
+
+@Composable
+private fun IconBubble(icon: ImageVector, accent: Color) {
+    Box(
+        modifier = Modifier
+            .size(44.dp)
+            .clip(CircleShape)
+            .background(accent.copy(alpha = 0.15f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(imageVector = icon, contentDescription = null, tint = accent, modifier = Modifier.size(22.dp))
     }
 }

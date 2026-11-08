@@ -3,7 +3,7 @@
 **Français** · [English](README.en.md)
 
 [![Build](https://img.shields.io/badge/Build-Passing-2e7d32.svg)](https://github.com/Relthdrarxash/sillon)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](app/src/main/AndroidManifest.xml)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen.svg)](app/build.gradle.kts)
 
@@ -43,7 +43,7 @@ Concevoir un potager nourricier et résilient ne s'improvise pas : les calendrie
 
 ### 5. Guide de santé végétale & Edge Vision 100 % hors-ligne (`DiagnosticEngine`)
 - **Diagnostic différentiel dichotomique :** Analyse pas-à-pas des symptômes selon les organes touchés (feuille, tige, collet, fruit, racine) sur 14 pathologies courantes.
-- **Edge Vision sur l'appareil :** Algorithme local d'analyse spectrale par chrominance (*Excess Green Index* : $2G - R - B$, ratio de chlorose, ratio de nécrose et couverture de feutrage blanc d'oïdium). Aucune image ne transite sur internet.
+- **Diagnostic photo sur l'appareil (en préparation) :** un petit modèle (MobileNetV3, environ 1 Mo, LiteRT) reconnaîtra sur le téléphone le mildiou, l'oïdium et l'alternariose, et répondra « je ne sais pas » sous un seuil de confiance calibré sur des photos de terrain. La fonction n'apparaît dans l'appli que lorsqu'un modèle entraîné est embarqué ; le pipeline d'entraînement est dans [`tools/ml`](tools/ml/README.md). Aucune image ne transite sur internet.
 - **Pharmacopée biologique certifiée :** Préconisations strictes en biocontrôle respectant le cahier des charges de l'Agriculture Biologique (décoction de prêle pour sa silice renforçant la cuticule, bicarbonate de potassium à action osmotique contre l'oïdium, cuivre raisonné plafonné à moins de 4 g/m²/an).
 
 ---
@@ -57,7 +57,7 @@ Comme l'ensemble des créations de **Pilmil Studio**, Sillon est conçu selon un
 - **0 traceur, 0 publicité, 0 télémétrie :** Aucun kit d'analyse (Google Analytics, Firebase, etc.) n'est embarqué dans le code binaire.
 - **Données souveraines & formats ouverts :** Votre potager vous appartient. Les données sont enregistrées localement dans un fichier JSON clair et accessible (`sillon_garden.json`).
 - **Sauvegarde & Restauration 1-tap :** Exportation et réimportation instantanées en JSON et au format tableur CSV (compatible LibreOffice Calc et Microsoft Excel) via le Storage Access Framework (SAF) d'Android.
-- **Bien commun libre :** Publié sous licence [GNU GPL v3.0](LICENSE).
+- **Bien commun libre :** Publié sous licence [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 ---
 
@@ -144,7 +144,7 @@ Sillon s'inscrit dans la démarche des applications d'intérêt général de **P
 
 ## Licence
 
-Sillon est un logiciel libre distribué sous licence **GNU General Public License v3.0** ([GNU GPLv3](LICENSE)). Vous êtes libre de l'utiliser, de l'étudier, de le modifier et de le redistribuer, sous réserve de maintenir toute version dérivée sous cette même licence libre et avec son code source complet.
+Sillon est un logiciel libre distribué sous licence **[Mozilla Public License 2.0](LICENSE)** (MPL-2.0) : vous pouvez l'utiliser, l'étudier, le modifier et le redistribuer ; les fichiers que vous modifiez doivent rester publiés sous la même licence, avec leur code source.
 
 ---
 

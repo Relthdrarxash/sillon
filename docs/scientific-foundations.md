@@ -3,7 +3,7 @@
 **Auteur :** Lead Scientific Agronomist & Technical Writer — Pilmil Studio  
 **Statut :** Référentiel technique et biologique officiel  
 **Version :** 1.0.0 (Alignée sur le moteur agronomique pur Kotlin de Sillon)  
-**Licence :** GNU GPL v3.0  
+**Licence :** Mozilla Public License 2.0 (MPL-2.0)  
 
 ---
 

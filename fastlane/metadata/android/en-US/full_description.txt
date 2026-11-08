@@ -14,6 +14,6 @@ YOUR DATA STAYS WITH YOU
 • No account required, no ads, no trackers.
 • The app does not request Internet permission: nothing ever leaves your device.
 • All garden logs and plans remain stored locally on your phone.
-• Free and open source (GPL-3.0): transparent, auditable, and community-friendly.
+• Free and open source (MPL-2.0): transparent, auditable, and community-friendly.
 
 Source code: https://github.com/pilmil/sillon
