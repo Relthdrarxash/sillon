@@ -146,6 +146,8 @@ Sillon is part of the digital commons initiative by **Pilmil Studio**:
 
 Sillon is free software distributed under the **GNU General Public License v3.0** ([GNU GPLv3](LICENSE)). You are free to inspect, run, modify, and redistribute it, provided that all derivative works remain open source under the same license terms.
 
+An [additional permission](LICENSE-EXCEPTION.md) (GPL section 7) allows distribution through app stores, including the Apple App Store, as long as the source code remains available under the same license.
+
 ---
 
 ## Contact & Feedback

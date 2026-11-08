@@ -146,6 +146,8 @@ Sillon s'inscrit dans la démarche des applications d'intérêt général de **P
 
 Sillon est un logiciel libre distribué sous licence **GNU General Public License v3.0** ([GNU GPLv3](LICENSE)). Vous êtes libre de l'utiliser, de l'étudier, de le modifier et de le redistribuer, sous réserve de maintenir toute version dérivée sous cette même licence libre et avec son code source complet.
 
+Une [permission additionnelle](LICENSE-EXCEPTION.md) (article 7 de la GPL) autorise la distribution par les magasins d'applications, App Store compris, tant que le code source reste disponible sous la même licence.
+
 ---
 
 ## Contact & Contribution
