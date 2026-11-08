@@ -52,6 +52,17 @@ CLASSES = [
     {"label": "oidium", "catalogId": "oidium"},
     {"label": "alternariose", "catalogId": "alternariose"},
     {"label": "autre", "catalogId": None},
+    # Ravageurs et maladies sans jeu public : photos de terrain iNaturalist (collect_data.py,
+    # option --classed). Le modèle ne les apprend que si leur dossier est fourni.
+    {"label": "pucerons", "catalogId": "pucerons"},
+    {"label": "altises", "catalogId": "altises"},
+    {"label": "rouille", "catalogId": "rouille"},
+    {"label": "limaces", "catalogId": "limaces"},
+    {"label": "pieride_chou", "catalogId": "pieride_chou"},
+    {"label": "botrytis", "catalogId": "botrytis"},
+    {"label": "doryphore", "catalogId": "doryphore"},
+    # Adventices, auxiliaires (coccinelles, vers de terre)... : jamais un diagnostic.
+    {"label": "hors_sujet", "catalogId": None},
 ]
 LABELS = [c["label"] for c in CLASSES]
 
@@ -122,6 +133,27 @@ def scan(root: Path, source: str, rng: random.Random, val_ratio: float) -> list[
             else:
                 split = "val" if rng.random() < val_ratio else "train"
             samples.append(Sample(image, LABELS.index(label), source, split))
+    return samples
+
+
+def scan_classed(root: Path, test_ratio: float, val_ratio: float) -> list[Sample]:
+    """
+    Photos de terrain rangées par classe Sillon (root/<label>/<groupe>_<nom>.jpg, voir collect_data.py).
+    Le découpage se fait par groupe (l'observateur) : un même jardin ne se retrouve jamais à la fois
+    à l'entraînement et au test. Le tirage dépend du seul nom du groupe, il est donc reproductible.
+    """
+    import zlib
+
+    samples: list[Sample] = []
+    for folder in sorted(p for p in root.iterdir() if p.is_dir()):
+        if folder.name not in LABELS:
+            print(f"  dossier ignoré (pas une classe Sillon) : {folder.name}")
+            continue
+        for image in sorted(p for p in folder.iterdir() if p.suffix.lower() in IMAGE_EXTENSIONS):
+            group = image.stem.split("_")[0]
+            draw = zlib.crc32(f"{folder.name}/{group}".encode()) / 2**32
+            split = "test" if draw < test_ratio else "val" if draw < test_ratio + val_ratio else "train"
+            samples.append(Sample(image, LABELS.index(folder.name), "field", split))
     return samples
 
 
@@ -219,6 +251,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--plantvillage", type=Path, action="append", default=[], help="Dossier PlantVillage (photos de labo). Répétable.")
     parser.add_argument("--plantdoc", type=Path, action="append", default=[], help="Dossier PlantDoc ou autres photos de terrain. Répétable.")
+    parser.add_argument("--classed", type=Path, action="append", default=[], help="Photos de terrain rangées par classe Sillon (collect_data.py). Répétable.")
     parser.add_argument("--out", type=Path, default=Path("out"))
     parser.add_argument("--epochs-head", type=int, default=5)
     parser.add_argument("--epochs-fine", type=int, default=20)
@@ -245,14 +278,16 @@ def main() -> int:
         weights = None
     else:
         weights = "imagenet"
-        if not args.plantvillage and not args.plantdoc:
-            parser.error("indiquez au moins --plantvillage ou --plantdoc (ou --synthetic)")
+        if not args.plantvillage and not args.plantdoc and not args.classed:
+            parser.error("indiquez au moins --plantvillage, --plantdoc ou --classed (ou --synthetic)")
 
     samples: list[Sample] = []
     for root in args.plantvillage:
         samples += scan(root, "lab", rng, val_ratio=0.15)
     for root in args.plantdoc:
         samples += scan(root, "field", rng, val_ratio=0.15)
+    for root in args.classed:
+        samples += scan_classed(root, test_ratio=0.20, val_ratio=0.15)
 
     def subset(split: str, source: str | None = None) -> list[Sample]:
         return [s for s in samples if s.split == split and (source is None or s.source == source)]

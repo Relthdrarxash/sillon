@@ -26,14 +26,38 @@ Vérification rapide du pipeline, sans données ni GPU : `python train_sillon.py
 | alternariose | *early blight* (tomate, pomme de terre) | Alternariose |
 | autre | autres maladies des mêmes plantes (septoriose, bactérioses, virus...) | renvoi vers la clé |
 
-Les autres fiches (pucerons, rouille, limaces...) n'ont pas de jeu de photos public suffisant :
-elles restent accessibles par la clé de diagnostic. Pour les ajouter, il faut des photos de terrain
-triées (quelques centaines par classe), dans un dossier par classe dont le nom contient la plante
-et le problème, puis compléter `label_for_folder` dans `train_sillon.py`.
+## Ravageurs et autres maladies : photos iNaturalist
+
+Les autres fiches n'ont pas de jeu de photos public. `collect_data.py` récupère des photos de
+terrain iNaturalist (licences CC0, CC-BY, CC-BY-SA seulement), réduites à 320 px, dans un dossier
+par classe, avec un fichier `ATTRIBUTIONS.csv` à publier avec le modèle (celui du modèle embarqué
+actuel est [`ATTRIBUTIONS.csv`](ATTRIBUTIONS.csv), 5 134 photos) :
+
+```
+python collect_data.py                  # environ 20 min, moins de 200 Mo
+python train_sillon.py --plantdoc <PlantDoc> --classed dataset_raw --install
+```
+
+| Classe | Taxons iNaturalist | Fiche dans l'appli |
+|---|---|---|
+| pucerons | *Brevicoryne brassicae*, *Aphis fabae*, *Macrosiphum euphorbiae*, *Myzus persicae* | Pucerons |
+| altises | *Phyllotreta* | Altises |
+| rouille | *Puccinia allii* | Rouille |
+| limaces | *Arion vulgaris*, *Deroceras reticulatum*, *Limax maximus* | Limaces |
+| pieride_chou | chenilles de *Pieris brassicae* et *P. rapae* | Piéride du chou |
+| botrytis | *Botrytis cinerea* | Botrytis |
+| doryphore | *Leptinotarsa decemlineata* | Doryphore |
+| hors_sujet | liseron, pissenlit, mouron, coccinelle, ver de terre | aucune (jamais un diagnostic) |
+
+iNaturalist complète aussi sain, mildiou, oïdium et alternariose. Les photos d'un même observateur
+restent toutes du même côté (entraînement, validation ou test). Limite : pour les ravageurs, les
+photos montrent surtout l'animal, pas les dégâts sur la feuille. Cul noir, mouche de la carotte,
+teigne du poireau, fonte des semis et anthracnose n'ont pas assez de photos libres : elles restent
+accessibles par la clé de diagnostic.
 
 ## Lire les résultats
 
-Seules les photos de **terrain** jamais vues (PlantDoc, dossier `test`) servent à juger le modèle :
+Seules les photos de **terrain** jamais vues (PlantDoc `test` et la part test de `--classed`) servent à juger le modèle :
 PlantVillage est photographié en labo et donne des scores trompeurs.
 
 - `metrics.field_test.macro_f1` : sous 0,60, `--install` refuse d'installer le modèle.

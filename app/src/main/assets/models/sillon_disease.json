@@ -1,0 +1,643 @@
+{
+  "format": 1,
+  "created": "2026-11-08",
+  "input": {
+    "width": 224,
+    "height": 224,
+    "channels": 3,
+    "order": "RGB",
+    "range": [
+      0,
+      255
+    ],
+    "layout": "NHWC"
+  },
+  "output": "probabilities",
+  "classes": [
+    {
+      "label": "sain",
+      "catalogId": null
+    },
+    {
+      "label": "mildiou",
+      "catalogId": "mildiou"
+    },
+    {
+      "label": "oidium",
+      "catalogId": "oidium"
+    },
+    {
+      "label": "alternariose",
+      "catalogId": "alternariose"
+    },
+    {
+      "label": "autre",
+      "catalogId": null
+    },
+    {
+      "label": "pucerons",
+      "catalogId": "pucerons"
+    },
+    {
+      "label": "altises",
+      "catalogId": "altises"
+    },
+    {
+      "label": "rouille",
+      "catalogId": "rouille"
+    },
+    {
+      "label": "limaces",
+      "catalogId": "limaces"
+    },
+    {
+      "label": "pieride_chou",
+      "catalogId": "pieride_chou"
+    },
+    {
+      "label": "botrytis",
+      "catalogId": "botrytis"
+    },
+    {
+      "label": "doryphore",
+      "catalogId": "doryphore"
+    },
+    {
+      "label": "hors_sujet",
+      "catalogId": null
+    }
+  ],
+  "temperature": 0.7,
+  "threshold": 0.45,
+  "metrics": {
+    "field_test": {
+      "n": 1098,
+      "accuracy": 0.818,
+      "macro_f1": 0.78,
+      "ece": 0.023,
+      "per_class": {
+        "sain": {
+          "precision": 0.822,
+          "recall": 0.638,
+          "f1": 0.718,
+          "n": 138
+        },
+        "mildiou": {
+          "precision": 0.481,
+          "recall": 0.542,
+          "f1": 0.51,
+          "n": 24
+        },
+        "oidium": {
+          "precision": 0.738,
+          "recall": 0.788,
+          "f1": 0.762,
+          "n": 118
+        },
+        "alternariose": {
+          "precision": 0.5,
+          "recall": 0.667,
+          "f1": 0.571,
+          "n": 18
+        },
+        "autre": {
+          "precision": 0.783,
+          "recall": 0.706,
+          "f1": 0.742,
+          "n": 51
+        },
+        "pucerons": {
+          "precision": 0.811,
+          "recall": 0.778,
+          "f1": 0.794,
+          "n": 99
+        },
+        "altises": {
+          "precision": 0.92,
+          "recall": 0.927,
+          "f1": 0.924,
+          "n": 124
+        },
+        "rouille": {
+          "precision": 0.917,
+          "recall": 0.786,
+          "f1": 0.846,
+          "n": 14
+        },
+        "limaces": {
+          "precision": 0.894,
+          "recall": 0.947,
+          "f1": 0.92,
+          "n": 133
+        },
+        "pieride_chou": {
+          "precision": 0.835,
+          "recall": 0.871,
+          "f1": 0.853,
+          "n": 93
+        },
+        "botrytis": {
+          "precision": 0.722,
+          "recall": 0.839,
+          "f1": 0.776,
+          "n": 62
+        },
+        "doryphore": {
+          "precision": 0.924,
+          "recall": 0.956,
+          "f1": 0.94,
+          "n": 114
+        },
+        "hors_sujet": {
+          "precision": 0.787,
+          "recall": 0.773,
+          "f1": 0.78,
+          "n": 110
+        }
+      },
+      "confusion": [
+        [
+          88,
+          2,
+          12,
+          1,
+          5,
+          3,
+          0,
+          0,
+          2,
+          4,
+          3,
+          4,
+          14
+        ],
+        [
+          3,
+          13,
+          1,
+          5,
+          0,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          3,
+          93,
+          0,
+          0,
+          2,
+          1,
+          1,
+          1,
+          3,
+          4,
+          0,
+          6
+        ],
+        [
+          2,
+          2,
+          0,
+          12,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          4,
+          3,
+          6,
+          36,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          3,
+          0,
+          1,
+          77,
+          5,
+          0,
+          0,
+          6,
+          5,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          1,
+          0,
+          1,
+          5,
+          115,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          11,
+          0,
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          126,
+          0,
+          2,
+          2,
+          2
+        ],
+        [
+          1,
+          0,
+          3,
+          0,
+          1,
+          3,
+          2,
+          0,
+          2,
+          81,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          2,
+          1,
+          0,
+          0,
+          2,
+          1,
+          0,
+          1,
+          1,
+          52,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          2,
+          1,
+          1,
+          109,
+          0
+        ],
+        [
+          5,
+          1,
+          8,
+          0,
+          0,
+          1,
+          0,
+          0,
+          6,
+          0,
+          3,
+          1,
+          85
+        ]
+      ]
+    },
+    "lab_validation": {
+      "n": 0,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "ece": 0.0,
+      "per_class": {
+        "sain": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "mildiou": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "oidium": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "alternariose": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "autre": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "pucerons": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "altises": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "rouille": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "limaces": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "pieride_chou": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "botrytis": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "doryphore": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        },
+        "hors_sujet": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "n": 0
+        }
+      },
+      "confusion": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "threshold": 0.45,
+    "field_coverage_at_threshold": 0.923
+  },
+  "synthetic": false
+}
