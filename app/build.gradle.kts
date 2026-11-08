@@ -48,6 +48,11 @@ android {
         compose = true
     }
 
+    // Le modèle de diagnostic photo est lu directement depuis l'APK (mappé en mémoire) : pas de compression.
+    androidResources {
+        noCompress += "tflite"
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -67,6 +72,8 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
+    // Inférence locale du diagnostic photo (Apache 2.0), sans accès réseau.
+    implementation("com.google.ai.edge.litert:litert:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     testImplementation("junit:junit:4.13.2")

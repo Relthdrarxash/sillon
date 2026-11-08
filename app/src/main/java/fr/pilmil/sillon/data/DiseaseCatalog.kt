@@ -432,8 +432,43 @@ object DiseaseCatalog {
         ),
     )
 
+    val ALTERNARIOSE = Disease(
+        id = "alternariose",
+        name = "Alternariose",
+        latinName = "Alternaria solani",
+        pathogenType = PathogenType.FUNGUS,
+        affectedOrgans = listOf(PlantOrgan.LEAF, PlantOrgan.STEM, PlantOrgan.FRUIT),
+        symptoms = listOf(
+            "Taches brunes arrondies à anneaux concentriques (en cible), souvent entourées d'un halo jaune",
+            "Attaque d'abord les feuilles basses et âgées, puis remonte le long du plant",
+            "Jaunissement puis chute des feuilles du bas",
+            "Taches sombres et enfoncées près du pédoncule des fruits de tomate",
+            "Lésions allongées brun foncé sur les tiges",
+        ),
+        causes = listOf(
+            "Alternance de nuits humides (rosée) et de journées chaudes, autour de 24 à 29°C",
+            "Spores conservées dans les débris de culture et le sol, projetées par les éclaboussures",
+            "Plants affaiblis : manque d'azote, stress hydrique, fin de saison",
+        ),
+        organicRemedies = listOf(
+            "Retirer et sortir du jardin les feuilles atteintes dès les premières taches",
+            "Bouillie bordelaise raisonnée en préventif sur les plants sensibles (max 4g cuivre/m²/an)",
+            "Décoction de prêle pour renforcer le feuillage",
+            "Arroser au pied, le matin, sans mouiller le feuillage",
+            "Apport de compost mûr pour éviter la carence en azote",
+        ),
+        targetFamilies = listOf(BotanicalFamily.SOLANACEAE),
+        preventiveMeasures = listOf(
+            "Rotation de 3 à 4 ans sans tomates, pommes de terre ni aubergines au même endroit",
+            "Pailler le sol pour éviter les éclaboussures",
+            "Supprimer les feuilles touchant le sol sur les 30 premiers centimètres",
+            "Détruire les débris de culture en fin de saison, ne pas les composter s'ils sont atteints",
+        ),
+    )
+
     val ALL_DISEASES: List<Disease> = listOf(
         MILDIOU,
+        ALTERNARIOSE,
         OIDIUM,
         CUL_NOIR,
         PUCERONS,

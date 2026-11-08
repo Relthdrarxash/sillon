@@ -19,6 +19,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.ui.platform.LocalContext
+import fr.pilmil.sillon.vision.PhotoClassifier
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -72,7 +77,13 @@ fun DoctorScreen(
         else diseases.filter { it.affectedOrgans.contains(selectedOrgan) }
     }
 
+    val listState = rememberLazyListState()
+    val context = LocalContext.current
+    val photoAvailable = remember { PhotoClassifier.isAvailable(context) }
+    val scope = rememberCoroutineScope()
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
@@ -96,6 +107,19 @@ fun DoctorScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+
+        // Diagnostic photo sur le téléphone, seulement si un modèle est embarqué.
+        if (photoAvailable) item {
+            PhotoDiagnosisCard(
+                onOpenDisease = { id ->
+                    // Ouvre la fiche dans la liste complète, puis y fait défiler l'écran.
+                    selectedOrgan = null
+                    selectedDiseaseId = id
+                    val index = diseases.indexOfFirst { it.id == id }
+                    if (index >= 0) scope.launch { listState.animateScrollToItem(DISEASE_LIST_OFFSET + index) }
+                },
+            )
         }
 
         // Sélecteur d'organe touché
@@ -320,3 +344,6 @@ private fun DiseaseCard(
         }
     }
 }
+
+/** Nombre d'éléments avant la liste des maladies quand la photo est proposée : en-tête, photo, organe, titre. */
+private const val DISEASE_LIST_OFFSET = 4

@@ -43,7 +43,7 @@ Designing a thriving and resilient food garden should not rely on folklore or ar
 
 ### 5. Plant Health Doctor & 100% Offline Edge Vision (`DiagnosticEngine`)
 - **Dichotomous differential diagnosis:** Step-by-step symptomatic triage across affected organs (leaf, stem, fruit, collar, roots) covering 14 common garden diseases and pests.
-- **On-device Edge Vision:** Local spectral chrominance analysis (*Excess Green Index*: $2G - R - B$, chlorosis ratio, necrosis ratio, and powdery mildew coverage). Zero bytes or image data ever leave the device.
+- **On-device photo diagnosis (in preparation):** a small model (MobileNetV3, about 1 MB, LiteRT) will recognise late blight, powdery mildew and early blight on the phone, and answer "not sure" below a confidence threshold calibrated on field photos. The feature only appears once a trained model is bundled; the training pipeline lives in [`tools/ml`](tools/ml/README.md). No image ever leaves the device.
 - **Certified organic remedies:** Strictly organic biocontrol treatments (horsetail silica decoction to strengthen leaf cuticles, potassium bicarbonate for osmotic powdery mildew lysis, and copper strictly capped below 4 g/m²/year).
 
 ---

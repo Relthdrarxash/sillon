@@ -9,3 +9,4 @@ saved_model/
 *.log
 __pycache__/
 .ipynb_checkpoints/
+out/

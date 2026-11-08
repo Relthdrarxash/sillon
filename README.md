@@ -43,7 +43,7 @@ Concevoir un potager nourricier et résilient ne s'improvise pas : les calendrie
 
 ### 5. Guide de santé végétale & Edge Vision 100 % hors-ligne (`DiagnosticEngine`)
 - **Diagnostic différentiel dichotomique :** Analyse pas-à-pas des symptômes selon les organes touchés (feuille, tige, collet, fruit, racine) sur 14 pathologies courantes.
-- **Edge Vision sur l'appareil :** Algorithme local d'analyse spectrale par chrominance (*Excess Green Index* : $2G - R - B$, ratio de chlorose, ratio de nécrose et couverture de feutrage blanc d'oïdium). Aucune image ne transite sur internet.
+- **Diagnostic photo sur l'appareil (en préparation) :** un petit modèle (MobileNetV3, environ 1 Mo, LiteRT) reconnaîtra sur le téléphone le mildiou, l'oïdium et l'alternariose, et répondra « je ne sais pas » sous un seuil de confiance calibré sur des photos de terrain. La fonction n'apparaît dans l'appli que lorsqu'un modèle entraîné est embarqué ; le pipeline d'entraînement est dans [`tools/ml`](tools/ml/README.md). Aucune image ne transite sur internet.
 - **Pharmacopée biologique certifiée :** Préconisations strictes en biocontrôle respectant le cahier des charges de l'Agriculture Biologique (décoction de prêle pour sa silice renforçant la cuticule, bicarbonate de potassium à action osmotique contre l'oïdium, cuivre raisonné plafonné à moins de 4 g/m²/an).
 
 ---
