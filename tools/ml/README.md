@@ -66,7 +66,22 @@ PlantVillage est photographié en labo et donne des scores trompeurs.
 - `field_coverage_at_threshold` : part des photos pour lesquelles l'appli ose répondre.
 - `temperature` : calibration de la confiance, déjà intégrée au fichier `.tflite`.
 
-## Licences des données
+## Licences et Transparence des Données d'Entraînement
 
-Vérifiez la licence des jeux utilisés avant de publier un modèle entraîné dessus
-(PlantVillage et PlantDoc sont diffusés sous des licences différentes selon les copies).
+Dans le respect de la charte de transparence et d'éthique de **Pilmil Studio** et de la licence MPL 2.0 :
+
+1. **PlantVillage** :
+   - *Auteurs* : David P. Hughes & Marcel Salathé (2015), dépôt Sharada P. Mohanty (2016).
+   - *Licence* : Creative Commons Attribution 3.0 (CC-BY 3.0) / Open Access.
+   - *Utilisation* : Filtré sur 9 965 photos couleur de cultures potagères (tomates, pommes de terre, poivrons, courges). Utilisé uniquement comme régularisateur de laboratoire, le score du modèle n'étant calculé que sur les photos de terrain.
+
+2. **PlantDoc** :
+   - *Auteurs* : Davinder Singh, Nidhi Jain, Pranjali Jain, Pratik Kayal et al. (CoDS-COMAD 2020).
+   - *Licence* : Creative Commons Attribution 4.0 International (CC-BY 4.0).
+   - *Utilisation* : 1 326 photographies in-situ en conditions réelles de culture (feuilles en plein champ, ombres, variations d'éclairage).
+
+3. **iNaturalist Open Data** :
+   - *Auteurs* : Réseau mondial de science citoyenne iNaturalist (observations validées au grade recherche ou identification communautaire).
+   - *Licences* : Uniquement sous licences libres permises (**CC0**, **CC-BY**, **CC-BY-SA**).
+   - *Traçabilité* : Chaque image conserve son observateur d'origine (`u<user_id>_inat<obs_id>.jpg`) et son URL source dans [`ATTRIBUTIONS.csv`](dataset_raw/ATTRIBUTIONS.csv).
+   - *Garantie scientifique* : Découpage `GroupKFold` par observateur : aucune plante ou session photo d'un même jardinier ne peut se retrouver à la fois dans l'entraînement et dans le jeu de test.

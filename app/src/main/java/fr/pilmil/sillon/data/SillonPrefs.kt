@@ -20,6 +20,11 @@ class SillonPrefs(context: Context) {
         get() = prefs.getBoolean(KEY_REMINDERS, false)
         set(value) = prefs.edit().putBoolean(KEY_REMINDERS, value).apply()
 
+    /** Assistant de cadrage photo intelligent (cadre coloré et déclenchement automatique). */
+    var smartViewfinderEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SMART_VIEWFINDER, true)
+        set(value) = prefs.edit().putBoolean(KEY_SMART_VIEWFINDER, value).apply()
+
     val department: DepartmentFrost?
         get() = departmentCode?.let(FrenchFrostCatalog::getByCode)
 
@@ -27,5 +32,6 @@ class SillonPrefs(context: Context) {
         const val KEY_ONBOARDED = "onboarded"
         const val KEY_DEPARTMENT = "department"
         const val KEY_REMINDERS = "sowing_reminders"
+        const val KEY_SMART_VIEWFINDER = "smart_viewfinder"
     }
 }

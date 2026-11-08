@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
@@ -54,6 +56,8 @@ fun SettingsScreen(
     onPickDepartment: () -> Unit = {},
     remindersOn: Boolean = false,
     onRemindersChange: (Boolean) -> Unit = {},
+    smartViewfinderOn: Boolean = true,
+    onSmartViewfinderChange: (Boolean) -> Unit = {},
 ) {
     val monthNames = listOf(
         "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -176,6 +180,52 @@ fun SettingsScreen(
                         )
                     }
                     Switch(checked = remindersOn, onCheckedChange = onRemindersChange)
+                }
+            }
+        }
+
+        // Section Diagnostic Photo & Viseur Intelligent
+        item {
+            SillonCard(
+                backgroundColor = MaterialTheme.colorScheme.surface,
+                borderColor = MaterialTheme.colorScheme.outline,
+            ) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Filled.CenterFocusStrong,
+                                contentDescription = null,
+                                tint = SillonPalette.SageDark,
+                                modifier = Modifier.size(24.dp),
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "Assistant de cadrage photo",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
+                        Switch(checked = smartViewfinderOn, onCheckedChange = onSmartViewfinderChange)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Viseur avec indicateur dynamique de netteté et d'exposition (vert/jaune/rouge) et déclenchement automatique dès que la feuille est bien cadrée.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 18.sp,
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Si désactivé, Sillon utilise l'appareil photo standard de votre téléphone sans demander de permission.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = SillonPalette.PeatMuted,
+                    )
                 }
             }
         }

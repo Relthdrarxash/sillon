@@ -42,13 +42,18 @@ INAT_SOURCES = {
     "mildiou": [
         (53860, "Phytophthora infestans", {}),
         (196477, "Pseudoperonospora cubensis", {}),
+        (1659825, "Plasmopara viticola", {}),
     ],
     "oidium": [
         (1578546, "Podosphaera xanthii", {}),
         (1542754, "Erysiphe pisi", {}),
         (333884, "Golovinomyces", {}),
     ],
-    "alternariose": [(360210, "Alternaria solani", {})],
+    "alternariose": [
+        (360210, "Alternaria solani", {}),
+        (327991, "Alternaria brassicae", {}),
+        (381199, "Alternaria dauci", {}),
+    ],
     "pucerons": [
         (326910, "Brevicoryne brassicae", {}),
         (1584763, "Aphis fabae", {}),
@@ -56,7 +61,11 @@ INAT_SOURCES = {
         (243745, "Myzus persicae", {}),
     ],
     "altises": [(178465, "Phyllotreta", {})],
-    "rouille": [(1489211, "Puccinia allii", {})],
+    "rouille": [
+        (1489211, "Puccinia allii", {}),
+        (323955, "Uromyces appendiculatus", {}),
+        (1677365, "Puccinia malvacearum", {}),
+    ],
     "limaces": [
         (54583, "Arion vulgaris", {}),
         (124432, "Deroceras reticulatum", {}),
