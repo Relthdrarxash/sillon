@@ -1,0 +1,150 @@
+{
+  "brand": {
+    "name": "Sillon",
+    "bg1": "#2E6347",
+    "bg2": "#1B221A",
+    "accent": "#A85532",
+    "onBg": "#FAF6F0",
+    "icon": "fastlane/metadata/android/fr-FR/images/icon.png",
+    "font": {
+      "file": "docs/assets/fonts/fraunces-latin-600-normal.woff2",
+      "weight": 600,
+      "body_file": "docs/assets/fonts/nunito-latin-400-normal.woff2",
+      "bold_file": "docs/assets/fonts/nunito-latin-700-normal.woff2"
+    }
+  },
+  "langs": {
+    "fr": {
+      "tagline": "Potager vivant et calendrier agronomique",
+      "social_line": "Planifiez, cultivez et soignez votre potager en harmonie avec les saisons. 100% hors-ligne, sans compte.",
+      "chips": [
+        "Sans pub",
+        "Sans compte",
+        "Hors ligne"
+      ],
+      "screens": [
+        {
+          "slug": "accueil",
+          "capture": "docs/captures/accueil.png",
+          "layout": "solo",
+          "tilt": -3,
+          "title": "Le bon geste au bon moment",
+          "subtitle": "Semis, repiquages et récoltes calés sur la date de dernière gelée de votre région.",
+          "chips": [
+            "Calendrier"
+          ]
+        },
+        {
+          "slug": "parcelles",
+          "capture": "docs/captures/parcelles_perspective.png",
+          "layout": "solo",
+          "tilt": 3,
+          "title": "Compagnonnage végétal vivant",
+          "subtitle": "Visualisez en 3D vos carrés et les synergies naturelles entre vos légumes.",
+          "chips": [
+            "Synergies"
+          ]
+        },
+        {
+          "slug": "diagnostic",
+          "capture": "docs/captures/diagnostic.png",
+          "layout": "solo",
+          "tilt": -3,
+          "title": "Diagnostic des maladies",
+          "subtitle": "Identifiez mildiou, oïdium et carences puis appliquez des remèdes naturels.",
+          "chips": [
+            "Soins bio"
+          ]
+        },
+        {
+          "slug": "plantes",
+          "capture": "docs/captures/plantes.png",
+          "layout": "solo",
+          "tilt": 3,
+          "title": "Encyclopédie potagère",
+          "subtitle": "Températures de germination, espacements, besoins en eau et conseils de culture.",
+          "chips": [
+            "Fiches"
+          ]
+        },
+        {
+          "slug": "reglages",
+          "capture": "docs/captures/reglages.png",
+          "layout": "solo",
+          "tilt": -3,
+          "title": "Adapté à votre climat",
+          "subtitle": "Gelées métropolitaines ou saisons tropicales, vos données restent chez vous.",
+          "chips": [
+            "100% hors-ligne"
+          ]
+        }
+      ]
+    },
+    "en": {
+      "tagline": "Living vegetable garden and agronomic calendar",
+      "social_line": "Plan, grow and care for your vegetable garden with the seasons. 100% offline, privacy first.",
+      "chips": [
+        "No ads",
+        "No account",
+        "Offline"
+      ],
+      "screens": [
+        {
+          "slug": "accueil",
+          "capture": "docs/captures/accueil.png",
+          "layout": "solo",
+          "tilt": -3,
+          "title": "The right action at the right time",
+          "subtitle": "Sowing, planting and harvests calibrated on your local frost date.",
+          "chips": [
+            "Calendar"
+          ]
+        },
+        {
+          "slug": "parcelles",
+          "capture": "docs/captures/parcelles_perspective.png",
+          "layout": "solo",
+          "tilt": 3,
+          "title": "Companion planting in 3D",
+          "subtitle": "Design raised beds and instantly see natural plant synergies.",
+          "chips": [
+            "Synergies"
+          ]
+        },
+        {
+          "slug": "diagnostic",
+          "capture": "docs/captures/diagnostic.png",
+          "layout": "solo",
+          "tilt": -3,
+          "title": "Plant disease diagnosis",
+          "subtitle": "Spot mildew, blight and pests, and apply organic remedies.",
+          "chips": [
+            "Organic"
+          ]
+        },
+        {
+          "slug": "plantes",
+          "capture": "docs/captures/plantes.png",
+          "layout": "solo",
+          "tilt": 3,
+          "title": "Vegetable encyclopedia",
+          "subtitle": "Germination temperatures, spacing, watering and sunlight needs.",
+          "chips": [
+            "Species"
+          ]
+        },
+        {
+          "slug": "reglages",
+          "capture": "docs/captures/reglages.png",
+          "layout": "solo",
+          "tilt": -3,
+          "title": "Tailored to your climate",
+          "subtitle": "Temperate frost dates or tropical seasons, strictly on your device.",
+          "chips": [
+            "100% offline"
+          ]
+        }
+      ]
+    }
+  }
+}
