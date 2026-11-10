@@ -2,7 +2,7 @@
 
 [Français](README.md) · **English**
 
-[![Build](https://img.shields.io/badge/Build-Passing-2e7d32.svg)](https://github.com/Relthdrarxash/sillon)
+[![Build](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml/badge.svg)](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](app/src/main/AndroidManifest.xml)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen.svg)](app/build.gradle.kts)
@@ -11,7 +11,7 @@ An Android application for **living vegetable gardens & agronomic planning**, 10
 
 Designing a thriving and resilient food garden should not rely on folklore or arbitrary monthly calendars. Fixed-date schedules ignore regional climates and seasonal shifts, while commercial apps demand intrusive accounts, subscriptions, or upload private garden pictures to remote servers.
 
-**Sillon** brings evidence-based agronomy and plant biology straight into your pocket—operational even in the deepest rural dead zones: dynamic phenological planning indexed against median last frost dates ($J_{\text{frost}}$), spatial 2D allelopathy and companion planting analysis, 4-year crop rotation schedules to preserve soil microbiology, and fully local on-device leaf health diagnostics.
+**Sillon** brings evidence-based agronomy and plant biology straight into your pocket, operational even in the deepest rural dead zones: dynamic phenological planning indexed against median last frost dates ($J_{\text{frost}}$), spatial 2D allelopathy and companion planting analysis, 4-year crop rotation schedules to preserve soil microbiology, and fully local on-device leaf health diagnostics.
 
 ---
 
@@ -151,4 +151,4 @@ Sillon is free software distributed under the **[Mozilla Public License 2.0](LIC
 ## Contact & Feedback
 
 Agronomic questions, field feedback, and code contributions:  
-**Pilmil Studio** — [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)
+**Pilmil Studio**: [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)

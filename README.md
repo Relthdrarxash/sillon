@@ -2,7 +2,7 @@
 
 **Français** · [English](README.en.md)
 
-[![Build](https://img.shields.io/badge/Build-Passing-2e7d32.svg)](https://github.com/Relthdrarxash/sillon)
+[![Build](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml/badge.svg)](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](app/src/main/AndroidManifest.xml)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen.svg)](app/build.gradle.kts)
@@ -151,4 +151,4 @@ Sillon est un logiciel libre distribué sous licence **[Mozilla Public License 2
 ## Contact & Contribution
 
 Questions agronomiques, retours de terrain et contributions :  
-**Pilmil Studio** — [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)
+**Pilmil Studio** : [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)
