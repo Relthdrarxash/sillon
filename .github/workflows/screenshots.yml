@@ -5,6 +5,9 @@ name: Captures d'écran
 # Résultat : artefact « captures » et pré-version « captures ».
 on:
   workflow_dispatch:
+  push:
+    branches: [captures-ecran]
+    paths: ['scripts/screenshots/**', '.github/workflows/screenshots.yml']
 
 permissions:
   contents: write
