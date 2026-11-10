@@ -19,35 +19,37 @@ import androidx.compose.ui.unit.sp
 import fr.pilmil.sillon.R
 
 object SillonPalette {
-    // Teintes claires (Papier lin & Terre vivante — lisibilité plein soleil)
-    val LinGround = Color(0xFFF7F4ED)
+    // Teintes claires (Blé doré & Feuillage vif — lisibilité plein soleil)
+    val LinGround = Color(0xFFFFF7DD)
     val LinSurface = Color(0xFFFFFFFF)
-    val LinSurfaceVariant = Color(0xFFEDE8DD)
-    val PeatInk = Color(0xFF1B221A)
-    val PeatMuted = Color(0xFF566254)
-    val Sage = Color(0xFF2E6347)
-    val SageDark = Color(0xFF1E432F)
-    val SageContainer = Color(0xFFDBE8DC)
-    val Terracotta = Color(0xFFA85532)
-    val TerracottaContainer = Color(0xFFF8E3D8)
-    val SproutGreen = Color(0xFF6E9854)
-    val FurrowLine = Color(0xFFDFD7CA)
-    val AlertAmber = Color(0xFFB55D18)
-    val AlertContainer = Color(0xFFFDF0E2)
-    val SynergyBlue = Color(0xFF2E6486)
-    val SynergyContainer = Color(0xFFDCEAF2)
+    val LinSurfaceVariant = Color(0xFFF6E9C4)
+    val PeatInk = Color(0xFF2A1F14)
+    val PeatMuted = Color(0xFF5E5240)
+    val Sage = Color(0xFF2B7A3B)
+    val SageDark = Color(0xFF1B5028)
+    val SageContainer = Color(0xFFD6F0B8)
+    val Terracotta = Color(0xFFBF3F27)
+    val TerracottaContainer = Color(0xFFFFDDD2)
+    val SproutGreen = Color(0xFF5FA843)
+    val FurrowLine = Color(0xFFE2CFA0)
+    val AlertAmber = Color(0xFFC2560F)
+    val AlertContainer = Color(0xFFFFE9C7)
+    val SynergyBlue = Color(0xFF1F6A96)
+    val SynergyContainer = Color(0xFFD3ECFA)
 
     // Teintes sombres (Humus nocturne & Terreau)
-    val NightPeatGround = Color(0xFF131713)
-    val NightPeatSurface = Color(0xFF1B221B)
-    val NightPeatVariant = Color(0xFF242E24)
-    val NightText = Color(0xFFEDE9E0)
-    val NightMuted = Color(0xFF9AA897)
-    val NightSage = Color(0xFF85B092)
-    val NightSageContainer = Color(0xFF233D2D)
-    val NightTerracotta = Color(0xFFDB8D6D)
-    val NightTerracottaContainer = Color(0xFF422419)
-    val NightFurrowLine = Color(0xFF2C382B)
+    val NightPeatGround = Color(0xFF17140F)
+    val NightPeatSurface = Color(0xFF241F17)
+    val NightPeatVariant = Color(0xFF30291D)
+    val NightText = Color(0xFFF5EEDC)
+    val NightMuted = Color(0xFFB5AB94)
+    val NightSage = Color(0xFF9AD27F)
+    val NightSageContainer = Color(0xFF2A4A22)
+    val NightTerracotta = Color(0xFFF09A7B)
+    val NightTerracottaContainer = Color(0xFF4A2418)
+    val LedgeLight = Color(0xFFD8BE7E)
+    val LedgeDark = Color(0xFF0C0A07)
+    val NightFurrowLine = Color(0xFF433824)
 }
 
 val FrauncesFontFamily = FontFamily(
@@ -61,9 +63,9 @@ val NunitoFontFamily = FontFamily(
     Font(R.font.nunito_bold, FontWeight.Bold),
 )
 
-private fun frauncesStyle(size: Int, weight: FontWeight = FontWeight.SemiBold, lineHeight: Int = (size * 1.25).toInt()) =
+private fun frauncesStyle(size: Int, weight: FontWeight = FontWeight.Bold, lineHeight: Int = (size * 1.25).toInt()) =
     TextStyle(
-        fontFamily = FrauncesFontFamily,
+        fontFamily = NunitoFontFamily,
         fontWeight = weight,
         fontSize = size.sp,
         lineHeight = lineHeight.sp,
@@ -96,11 +98,11 @@ private val SillonTypography = Typography(
 )
 
 private val SillonShapes = Shapes(
-    extraSmall = RoundedCornerShape(8.dp),
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(18.dp),
-    large = RoundedCornerShape(24.dp),
-    extraLarge = RoundedCornerShape(32.dp),
+    extraSmall = RoundedCornerShape(12.dp),
+    small = RoundedCornerShape(16.dp),
+    medium = RoundedCornerShape(22.dp),
+    large = RoundedCornerShape(28.dp),
+    extraLarge = RoundedCornerShape(36.dp),
 )
 
 private val LightColors: ColorScheme = lightColorScheme(

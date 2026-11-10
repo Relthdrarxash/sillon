@@ -63,6 +63,7 @@ import fr.pilmil.sillon.model.Vegetable
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonButton
 import fr.pilmil.sillon.ui.components.SillonCard
+import fr.pilmil.sillon.ui.components.pictogram
 import fr.pilmil.sillon.ui.theme.SillonPalette
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -466,10 +467,10 @@ private fun SlotCell(
 ) {
     Surface(
         modifier = modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = if (vegetable != null) SillonPalette.SageContainer.copy(alpha = 0.5f) else SillonPalette.LinGround,
+        shape = RoundedCornerShape(16.dp),
+        color = if (vegetable != null) SillonPalette.SageContainer else SillonPalette.LinSurfaceVariant,
         border = BorderStroke(
-            1.5.dp,
+            2.dp,
             when {
                 hasBadCompanion -> SillonPalette.AlertAmber
                 hasGoodCompanion -> SillonPalette.Sage
@@ -508,6 +509,10 @@ private fun SlotCell(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
+                    Text(
+                        text = vegetable.pictogram(),
+                        fontSize = 22.sp,
+                    )
                     Text(
                         text = vegetable.name,
                         style = MaterialTheme.typography.labelSmall,

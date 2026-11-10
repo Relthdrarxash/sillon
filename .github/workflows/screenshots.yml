@@ -6,7 +6,7 @@ name: Captures d'écran
 on:
   workflow_dispatch:
   push:
-    branches: [captures-ecran]
+    branches: [captures-ecran, habillage-ludique]
     paths: ['scripts/screenshots/**', '.github/workflows/screenshots.yml']
 
 permissions:
