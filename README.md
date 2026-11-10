@@ -15,6 +15,10 @@ Concevoir un potager nourricier et résilient ne s'improvise pas : les calendrie
 
 ---
 
+## Captures d'écran
+
+<p align="center"><img src="docs/captures/s1.webp" width="150" alt="Travaux de la quinzaine"> <img src="docs/captures/s2.webp" width="150" alt="Plan du potager"> <img src="docs/captures/s3.webp" width="150" alt="Encyclopédie des plantes"> <img src="docs/captures/s4.webp" width="150" alt="Fiche d'une plante"> <img src="docs/captures/s5.webp" width="150" alt="Docteur du potager"> <img src="docs/captures/s6.webp" width="150" alt="Réglages"></p>
+
 ## Ce que fait l'application
 
 ### 1. Calendrier agronomique dynamique indexé sur les gelées ($J_{\text{gel}}$)
