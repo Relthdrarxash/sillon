@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Rien n'est sauvegardé dans le nuage : les données ne passent jamais par un serveur de Google.
+    Le transfert direct vers un nouveau téléphone (câble ou sans fil, au moment de sa configuration)
+    reste possible : la personne le choisit, et les données vont d'un appareil à l'autre.
+    Ces règles s'appliquent à partir d'Android 12. Avant, android:fullBackupContent="false" coupe toute sauvegarde.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+        <exclude domain="device_root" />
+        <exclude domain="device_file" />
+        <exclude domain="device_database" />
+        <exclude domain="device_sharedpref" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="database" />
+        <include domain="sharedpref" />
+        <include domain="file" />
+    </device-transfer>
+</data-extraction-rules>
