@@ -15,6 +15,10 @@ Designing a thriving and resilient food garden should not rely on folklore or ar
 
 ---
 
+## Screenshots
+
+<p align="center"><img src="docs/captures/s1.webp" width="150" alt="Fortnight tasks"> <img src="docs/captures/s2.webp" width="150" alt="Garden plan"> <img src="docs/captures/s3.webp" width="150" alt="Plant encyclopedia"> <img src="docs/captures/s4.webp" width="150" alt="Plant sheet"> <img src="docs/captures/s5.webp" width="150" alt="Garden doctor"> <img src="docs/captures/s6.webp" width="150" alt="Settings"></p>
+
 ## What the App Does
 
 ### 1. Dynamic Phenological Calendar Indexed to Last Frost ($J_{\text{frost}}$)
