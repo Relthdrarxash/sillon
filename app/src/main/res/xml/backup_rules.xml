@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Sauvegarde automatique Android 6 à 11 : tout est exclu, l'appli se veut 100 % hors ligne. -->
+<!-- Sauvegarde automatique Android 6 à 11 : rien n'est copié, ces versions ne permettent pas de garantir le chiffrement. -->
 <full-backup-content>
     <exclude domain="root" />
     <exclude domain="file" />

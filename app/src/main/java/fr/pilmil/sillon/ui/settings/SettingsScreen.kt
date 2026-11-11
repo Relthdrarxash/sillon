@@ -56,6 +56,10 @@ fun SettingsScreen(
     onPickDepartment: () -> Unit = {},
     remindersOn: Boolean = false,
     onRemindersChange: (Boolean) -> Unit = {},
+    cloudBackupAvailable: Boolean = false,
+    cloudBackupPossible: Boolean = false,
+    cloudBackupOn: Boolean = false,
+    onCloudBackupChange: (Boolean) -> Unit = {},
     smartViewfinderOn: Boolean = true,
     onSmartViewfinderChange: (Boolean) -> Unit = {},
 ) {
@@ -283,6 +287,48 @@ fun SettingsScreen(
                         icon = Icons.Filled.TableChart,
                         onClick = onExportCsv,
                     )
+                }
+            }
+        }
+
+        // Sauvegarde dans le compte Google : désactivée par défaut, choisie par la personne
+        if (cloudBackupAvailable) {
+            item {
+                SillonCard(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    borderColor = MaterialTheme.colorScheme.outline,
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "Copie dans mon compte Google",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Switch(
+                                checked = cloudBackupOn && cloudBackupPossible,
+                                onCheckedChange = onCloudBackupChange,
+                                enabled = cloudBackupPossible,
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = if (cloudBackupPossible) {
+                                "Désactivée par défaut. Si vous l'activez, c'est Android qui copie votre potager dans votre compte Google, chiffré avec le code de verrouillage de votre téléphone : ni Google ni Sillon ne peuvent le lire. Pour le retrouver sur un autre téléphone, il faudra saisir le code de l'ancien. Désactiver ce réglage n'efface pas une copie déjà envoyée : supprimez-la depuis la sauvegarde de votre compte Google. L'export JSON ci-dessus reste le moyen le plus sûr de changer de téléphone."
+                            } else {
+                                "Indisponible : définissez d'abord un code, un schéma ou un mot de passe de verrouillage d'écran. Sans lui, Android ne chiffre pas la copie et Sillon ne l'envoie pas."
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = 18.sp,
+                        )
+                    }
                 }
             }
         }
