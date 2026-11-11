@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Règles de sauvegarde Android 12+. Sillon se dit 100 % hors ligne : rien ne part vers le cloud
+    (potager, préférences, tout reste sur l'appareil). Le transfert direct d'un téléphone à l'autre
+    reste permis, pour ne pas perdre le potager au changement d'appareil.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="root" />
+        <include domain="file" />
+        <include domain="database" />
+        <include domain="sharedpref" />
+        <include domain="external" />
+    </device-transfer>
+</data-extraction-rules>

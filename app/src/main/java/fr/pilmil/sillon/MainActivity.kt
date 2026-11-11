@@ -9,6 +9,20 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.Executors
+import fr.pilmil.sillon.data.GardenUpdate
+import fr.pilmil.sillon.data.GardenValidationException
+import fr.pilmil.sillon.model.Garden
+import fr.pilmil.sillon.model.ParcelType
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -70,6 +84,15 @@ class MainActivity : ComponentActivity() {
     private lateinit var repository: GardenRepository
     private lateinit var prefs: SillonPrefs
 
+    // Un seul fil pour le disque : les écritures restent dans l'ordre des gestes, sans bloquer l'interface.
+    private val diskExecutor = Executors.newSingleThreadExecutor()
+    private val disk: CoroutineDispatcher = diskExecutor.asCoroutineDispatcher()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        diskExecutor.shutdown()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         repository = GardenRepository(this)
@@ -78,17 +101,36 @@ class MainActivity : ComponentActivity() {
         setContent {
             SillonTheme(darkTheme = isSystemInDarkTheme()) {
                 var currentScreen by rememberSaveable { mutableStateOf(SillonScreen.DASHBOARD) }
-                var garden by remember { mutableStateOf(repository.loadGarden()) }
+                // Null le temps du chargement (lecture du disque hors du fil principal).
+                var loadedGarden by remember { mutableStateOf<Garden?>(null) }
+                val scope = rememberCoroutineScope()
                 var onboarded by remember { mutableStateOf(prefs.onboarded) }
                 var departmentCode by remember { mutableStateOf(prefs.departmentCode) }
                 var remindersOn by remember { mutableStateOf(prefs.sowingReminders) }
+                var smartViewfinderOn by remember { mutableStateOf(prefs.smartViewfinderEnabled) }
                 var pickingDepartment by remember { mutableStateOf(false) }
+
+                /** Applique une modification sur le fil disque, puis affiche le résultat et prévient si l'enregistrement a échoué. */
+                fun update(change: () -> GardenUpdate) {
+                    scope.launch {
+                        val result = withContext(disk) { change() }
+                        loadedGarden = result.garden
+                        if (!result.saved) Toast.makeText(this@MainActivity, "Le potager n'a pas pu être enregistré : la dernière modification risque d'être perdue. Vérifiez l'espace libre du téléphone.", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+                LaunchedEffect(Unit) {
+                    loadedGarden = withContext(disk) { repository.loadGarden() }
+                    if (repository.consumeRecoveryNotice()) {
+                        Toast.makeText(this@MainActivity, "Le fichier du potager était illisible : un potager neuf a été créé. L'ancien fichier est conservé dans les données de l'appli.", Toast.LENGTH_LONG).show()
+                    }
+                }
 
                 fun chooseDepartment(code: String?) {
                     prefs.departmentCode = code
                     departmentCode = code
                     val dep = code?.let(FrenchFrostCatalog::getByCode) ?: return
-                    garden = repository.updateFrostDate(dep.medianLastFrost.month, dep.medianLastFrost.day)
+                    update { repository.updateFrostDate(dep.medianLastFrost.month, dep.medianLastFrost.day) }
                 }
 
                 fun setReminders(on: Boolean) {
@@ -107,13 +149,19 @@ class MainActivity : ComponentActivity() {
                     contract = ActivityResultContracts.CreateDocument("application/json")
                 ) { uri ->
                     if (uri != null) {
-                        try {
-                            contentResolver.openOutputStream(uri)?.use { out ->
-                                repository.exportToJson(out)
+                        scope.launch {
+                            val written = withContext(disk) {
+                                try {
+                                    contentResolver.openOutputStream(uri)?.use { out -> repository.exportToJson(out) } != null
+                                } catch (e: Exception) {
+                                    false
+                                }
                             }
-                            Toast.makeText(this, "Sauvegarde exportée avec succès", Toast.LENGTH_SHORT).show()
-                        } catch (e: Exception) {
-                            Toast.makeText(this, "La sauvegarde n'a pas pu être écrite. Réessayez en choisissant un autre dossier.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this@MainActivity,
+                                if (written) "Sauvegarde exportée avec succès" else "La sauvegarde n'a pas pu être écrite. Réessayez en choisissant un autre dossier.",
+                                if (written) Toast.LENGTH_SHORT else Toast.LENGTH_LONG,
+                            ).show()
                         }
                     }
                 }
@@ -123,18 +171,23 @@ class MainActivity : ComponentActivity() {
                     contract = ActivityResultContracts.OpenDocument()
                 ) { uri ->
                     if (uri != null) {
-                        try {
-                            contentResolver.openInputStream(uri)?.use { input ->
-                                val result = repository.importFromJson(input)
-                                result.onSuccess { imported ->
-                                    garden = imported
-                                    Toast.makeText(this, "Potager restauré (${imported.parcels.size} parcelles)", Toast.LENGTH_SHORT).show()
-                                }.onFailure { error ->
-                                    Toast.makeText(this, "Ce fichier n'est pas une sauvegarde Sillon. Choisissez le fichier .json exporté depuis Sillon.", Toast.LENGTH_LONG).show()
+                        scope.launch {
+                            val result = withContext(disk) {
+                                try {
+                                    contentResolver.openInputStream(uri)?.use { repository.importFromJson(it) }
+                                        ?: Result.failure(java.io.IOException("Flux illisible"))
+                                } catch (e: Exception) {
+                                    Result.failure(e)
                                 }
                             }
-                        } catch (e: Exception) {
-                            Toast.makeText(this, "Le fichier n'a pas pu être lu. Réessayez ou choisissez un autre fichier.", Toast.LENGTH_LONG).show()
+                            result.onSuccess { imported ->
+                                loadedGarden = imported
+                                Toast.makeText(this@MainActivity, "Potager restauré (${imported.parcels.size} parcelles). L'ancien est gardé en copie de secours.", Toast.LENGTH_SHORT).show()
+                            }.onFailure { error ->
+                                val message = (error as? GardenValidationException)?.message
+                                    ?: "Le fichier n'a pas pu être importé. Réessayez ou choisissez un autre fichier."
+                                Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
                 }
@@ -144,15 +197,27 @@ class MainActivity : ComponentActivity() {
                     contract = ActivityResultContracts.CreateDocument("text/csv")
                 ) { uri ->
                     if (uri != null) {
-                        try {
-                            contentResolver.openOutputStream(uri)?.use { out ->
-                                repository.exportToCsv(out)
+                        scope.launch {
+                            val written = withContext(disk) {
+                                try {
+                                    contentResolver.openOutputStream(uri)?.use { out -> repository.exportToCsv(out) } != null
+                                } catch (e: Exception) {
+                                    false
+                                }
                             }
-                            Toast.makeText(this, "Fichier tableur CSV exporté", Toast.LENGTH_SHORT).show()
-                        } catch (e: Exception) {
-                            Toast.makeText(this, "Le fichier tableur n'a pas pu être écrit. Réessayez en choisissant un autre dossier.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this@MainActivity,
+                                if (written) "Fichier tableur CSV exporté" else "Le fichier tableur n'a pas pu être écrit. Réessayez en choisissant un autre dossier.",
+                                if (written) Toast.LENGTH_SHORT else Toast.LENGTH_LONG,
+                            ).show()
                         }
                     }
+                }
+
+                // Écran vide le temps de lire le potager sur le disque.
+                val garden: Garden = loadedGarden ?: run {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    return@SillonTheme
                 }
 
                 if (!onboarded) {
@@ -222,13 +287,13 @@ class MainActivity : ComponentActivity() {
                                 garden = garden,
                                 vegetables = vegetables,
                                 onUpdateSlot = { pId, r, c, vId ->
-                                    garden = repository.updateSlot(pId, r, c, vId)
+                                    update { repository.updateSlot(pId, r, c, vId) }
                                 },
                                 onAddParcel = { name, type, r, c ->
-                                    garden = repository.addParcel(name, type, r, c)
+                                    update { repository.addParcel(name, type, r, c) }
                                 },
                                 onDeleteParcel = { pId ->
-                                    garden = repository.deleteParcel(pId)
+                                    update { repository.deleteParcel(pId) }
                                 },
                             )
 
@@ -247,7 +312,7 @@ class MainActivity : ComponentActivity() {
                                     // Une date réglée à la main ne correspond plus au département.
                                     // Le jour est ramené à la longueur du mois (pas de 31 avril ni de 29 février).
                                     val day = d.coerceAtMost(java.time.YearMonth.of(2023, m).lengthOfMonth())
-                                    garden = repository.updateFrostDate(m, day)
+                                    update { repository.updateFrostDate(m, day) }
                                     prefs.departmentCode = null
                                     departmentCode = null
                                 },
@@ -260,6 +325,11 @@ class MainActivity : ComponentActivity() {
                                     } else {
                                         setReminders(on)
                                     }
+                                },
+                                smartViewfinderOn = smartViewfinderOn,
+                                onSmartViewfinderChange = { on ->
+                                    prefs.smartViewfinderEnabled = on
+                                    smartViewfinderOn = on
                                 },
                                 onExportJson = {
                                     val fileName = "sillon_sauvegarde_${LocalDate.now()}.json"

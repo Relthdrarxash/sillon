@@ -3,3 +3,4 @@
 tensorflow>=2.16
 numpy
 pillow
+requests  # collect_data.py

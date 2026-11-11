@@ -1,6 +1,8 @@
 package fr.pilmil.sillon.ui.doctor
 
+import android.Manifest
 import android.content.ActivityNotFoundException
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -20,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,13 +36,18 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import fr.pilmil.sillon.data.DiseaseCatalog
+import fr.pilmil.sillon.data.SillonPrefs
 import fr.pilmil.sillon.engine.PhotoVerdict
 import fr.pilmil.sillon.ui.components.SillonButton
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.components.SillonOutlinedButton
 import fr.pilmil.sillon.vision.PhotoClassifier
+import fr.pilmil.sillon.vision.PhotoResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,30 +61,88 @@ import java.io.File
 @Composable
 fun PhotoDiagnosisCard(onOpenDisease: (String) -> Unit) {
     val context = LocalContext.current
-    val classifier = remember { PhotoClassifier.load(context) } ?: return
-    DisposableEffect(classifier) { onDispose { classifier.close() } }
+    // Le modèle se charge hors du fil principal ; la carte n'apparaît que s'il est disponible.
+    var classifier by remember { mutableStateOf<PhotoClassifier?>(null) }
+    LaunchedEffect(Unit) { classifier = withContext(Dispatchers.IO) { PhotoClassifier.load(context) } }
+    // close() attend la fin d'une éventuelle analyse en cours, puis rend toute analyse suivante « annulée ».
+    DisposableEffect(classifier) { onDispose { classifier?.close() } }
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
     var verdict by remember { mutableStateOf<PhotoVerdict?>(null) }
     var failed by remember { mutableStateOf(false) }
 
     fun analyse(uri: Uri) {
+        val active = classifier ?: return
         busy = true
         failed = false
         scope.launch {
-            val result = withContext(Dispatchers.Default) {
-                PhotoClassifier.decode(context, uri)?.let { runCatching { classifier.classify(it) }.getOrNull() }
+            val result = withContext(Dispatchers.Default) { active.analyse(context, uri) }
+            when (result) {
+                is PhotoResult.Success -> { verdict = result.verdict; failed = false }
+                is PhotoResult.Cancelled -> Unit
+                is PhotoResult.DecodeFailed, is PhotoResult.InferenceFailed -> { verdict = null; failed = true }
             }
-            verdict = result
-            failed = result == null
             busy = false
         }
     }
 
+    if (classifier == null) return
+
     val photoFile = remember { File(context.cacheDir, "photos/feuille.jpg").apply { parentFile?.mkdirs() } }
     val photoUri = remember { FileProvider.getUriForFile(context, "${context.packageName}.photos", photoFile) }
+    var showSmartViewfinder by remember { mutableStateOf(false) }
+
     val camera = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok -> if (ok) analyse(photoUri) }
     val gallery = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> uri?.let(::analyse) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            showSmartViewfinder = true
+        } else {
+            try {
+                camera.launch(photoUri)
+            } catch (_: ActivityNotFoundException) {
+                failed = true
+            }
+        }
+    }
+
+    fun launchCamera() {
+        val prefs = SillonPrefs(context)
+        if (prefs.smartViewfinderEnabled) {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA,
+            ) == PackageManager.PERMISSION_GRANTED
+            if (hasPermission) {
+                showSmartViewfinder = true
+            } else {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        } else {
+            try {
+                camera.launch(photoUri)
+            } catch (_: ActivityNotFoundException) {
+                failed = true
+            }
+        }
+    }
+
+    if (showSmartViewfinder) {
+        Dialog(
+            onDismissRequest = { showSmartViewfinder = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+        ) {
+            SmartCameraViewfinder(
+                outputFile = photoFile,
+                onPhotoCaptured = {
+                    showSmartViewfinder = false
+                    analyse(photoUri)
+                },
+                onDismiss = { showSmartViewfinder = false },
+            )
+        }
+    }
 
     SillonCard(backgroundColor = MaterialTheme.colorScheme.surface, borderColor = MaterialTheme.colorScheme.outline) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -90,13 +156,7 @@ fun PhotoDiagnosisCard(onOpenDisease: (String) -> Unit) {
                 text = "Prendre une photo",
                 icon = Icons.Filled.CameraAlt,
                 enabled = !busy,
-                onClick = {
-                    try {
-                        camera.launch(photoUri)
-                    } catch (_: ActivityNotFoundException) {
-                        failed = true
-                    }
-                },
+                onClick = { launchCamera() },
             )
             SillonOutlinedButton(
                 text = "Choisir dans la galerie",
