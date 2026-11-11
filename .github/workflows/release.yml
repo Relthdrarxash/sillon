@@ -1,0 +1,112 @@
+name: Publication
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Numéro de version à publier, par exemple 1.0.0 (l'étiquette v1.0.0 est créée)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Versions signées, GitHub et Google Play
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PACKAGE_NAME: fr.pilmil.sillon
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Numéro de version depuis l'étiquette
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            tag="v${INPUT_VERSION#v}"
+          else
+            tag="$GITHUB_REF_NAME"
+          fi
+          echo "RELEASE_TAG=$tag" >> "$GITHUB_ENV"
+          bash scripts/version-from-tag.sh "$tag" | tee -a "$GITHUB_ENV"
+
+      - name: Tests unitaires
+        run: |
+          chmod +x gradlew
+          ./gradlew testReleaseUnitTest --no-daemon
+
+      - name: Restaurer la clé d'envoi
+        env:
+          KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE_B64 }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::error::Secret RELEASE_KEYSTORE_B64 manquant : impossible de signer une version publiable."
+            exit 1
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "RELEASE_KEYSTORE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+
+      - name: Compiler l'APK et l'AAB signés
+        env:
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          SILLON_VERSION_CODE: ${{ env.VERSION_CODE }}
+          SILLON_VERSION_NAME: ${{ env.VERSION_NAME }}
+        run: |
+          ./gradlew assembleRelease bundleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk "Sillon-$VERSION_NAME.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "Sillon-$VERSION_NAME.aab"
+          sha256sum "Sillon-$VERSION_NAME.apk" > "Sillon-$VERSION_NAME.apk.sha256"
+          cp "Sillon-$VERSION_NAME.apk" Sillon.apk
+
+      - name: Créer la version GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$RELEASE_TAG" --target "$GITHUB_SHA" \
+            "Sillon-$VERSION_NAME.apk" "Sillon-$VERSION_NAME.apk.sha256" "Sillon-$VERSION_NAME.aab" Sillon.apk \
+            --title "Sillon $VERSION_NAME" --generate-notes
+
+      - name: Vérifier la configuration Google Play
+        id: play
+        env:
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -n "$PLAY_JSON" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Secret PLAY_SERVICE_ACCOUNT_JSON absent : envoi à Google Play ignoré. L'AAB est dans la version GitHub."
+          fi
+
+      - name: Préparer les notes de version
+        if: steps.play.outputs.enabled == 'true'
+        run: bash scripts/play-whatsnew.sh "$VERSION_CODE"
+
+      - name: Envoyer sur Google Play
+        if: steps.play.outputs.enabled == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ env.PACKAGE_NAME }}
+          releaseFiles: Sillon-${{ env.VERSION_NAME }}.aab
+          releaseName: ${{ env.VERSION_NAME }}
+          track: ${{ vars.PLAY_TRACK || 'alpha' }}
+          status: ${{ vars.PLAY_RELEASE_STATUS || 'completed' }}
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
