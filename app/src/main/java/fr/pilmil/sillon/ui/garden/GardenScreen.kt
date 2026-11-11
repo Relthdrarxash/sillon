@@ -51,10 +51,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.pilmil.sillon.engine.Growth
+import fr.pilmil.sillon.engine.GrowthEngine
+import fr.pilmil.sillon.engine.GrowthStage
 import fr.pilmil.sillon.model.Garden
 import fr.pilmil.sillon.model.Parcel
 import fr.pilmil.sillon.model.ParcelSlot
@@ -65,6 +71,10 @@ import fr.pilmil.sillon.ui.components.SillonButton
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.components.pictogram
 import fr.pilmil.sillon.ui.theme.SillonPalette
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -220,6 +230,7 @@ fun GardenScreen(
         val (row, col) = selectedSlotCoord!!
         val currentSlot = activeParcel.getSlot(row, col)
         val currentVeg = vegetables.find { it.id == currentSlot?.vegetableId }
+        val currentGrowth = slotGrowth(currentSlot, currentVeg, remember { LocalDate.now() })
 
         ModalBottomSheet(
             onDismissRequest = { selectedSlotCoord = null },
@@ -244,6 +255,24 @@ fun GardenScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+
+                if (currentVeg != null && currentGrowth != null) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = stagePictogram(currentVeg, currentGrowth), fontSize = 28.sp)
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = currentGrowth.summary(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            GrowthBar(growth = currentGrowth, height = 8)
+                        }
+                    }
+                }
 
                 if (currentVeg != null) {
                     Spacer(modifier = Modifier.height(12.dp))
@@ -291,7 +320,9 @@ fun GardenScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
-                                Column {
+                                Text(text = veg.pictogram(), fontSize = 22.sp)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = veg.name,
                                         style = MaterialTheme.typography.bodyMedium,
@@ -410,6 +441,7 @@ private fun ParcelGridView(
     vegetables: List<Vegetable>,
     onSlotClick: (row: Int, col: Int) -> Unit,
 ) {
+    val today = remember { LocalDate.now() }
     SillonCard(
         backgroundColor = MaterialTheme.colorScheme.surface,
         borderColor = MaterialTheme.colorScheme.outline,
@@ -443,6 +475,7 @@ private fun ParcelGridView(
 
                         SlotCell(
                             vegetable = veg,
+                            growth = slotGrowth(slot, veg, today),
                             hasGoodCompanion = hasGoodCompanion,
                             hasBadCompanion = hasBadCompanion,
                             modifier = Modifier
@@ -460,13 +493,22 @@ private fun ParcelGridView(
 @Composable
 private fun SlotCell(
     vegetable: Vegetable?,
+    growth: Growth?,
     hasGoodCompanion: Boolean,
     hasBadCompanion: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
+    // Un seul énoncé pour les lecteurs d'écran : nom, stade et délai, sans dépendre du pictogramme.
+    val description = when {
+        vegetable == null -> "Case libre"
+        growth != null -> "${vegetable.name}. ${growth.summary()}"
+        else -> vegetable.name
+    }
     Surface(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier
+            .clickable(onClickLabel = "Ouvrir l'emplacement", onClick = onClick)
+            .semantics { contentDescription = description },
         shape = RoundedCornerShape(16.dp),
         color = if (vegetable != null) SillonPalette.SageContainer else SillonPalette.LinSurfaceVariant,
         border = BorderStroke(
@@ -482,7 +524,9 @@ private fun SlotCell(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(6.dp),
+                .padding(6.dp)
+                // L'énoncé de la case suffit : on évite la lecture du pictogramme puis du nom en double.
+                .clearAndSetSemantics { },
             contentAlignment = Alignment.Center,
         ) {
             // Badge d'affinité en haut à droite
@@ -510,8 +554,8 @@ private fun SlotCell(
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        text = vegetable.pictogram(),
-                        fontSize = 22.sp,
+                        text = stagePictogram(vegetable, growth),
+                        fontSize = if (growth?.stage == GrowthStage.SETTLING) 16.sp else 22.sp,
                     )
                     Text(
                         text = vegetable.name,
@@ -521,12 +565,26 @@ private fun SlotCell(
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                     )
-                    Text(
-                        text = "×${vegetable.squareFootDensity}",
-                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
-                        color = SillonPalette.SageDark,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    if (growth == null) {
+                        Text(
+                            text = "×${vegetable.squareFootDensity}",
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                            color = SillonPalette.SageDark,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    } else if (growth.stage == GrowthStage.READY || growth.stage == GrowthStage.FINISHED) {
+                        // Le mot double la couleur : « À récolter » ne se lit pas seulement à la teinte.
+                        Text(
+                            text = if (growth.stage == GrowthStage.READY) "À récolter" else "Terminée",
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                            color = if (growth.stage == GrowthStage.READY) SillonPalette.Terracotta else MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        GrowthBar(growth = growth, height = 5, modifier = Modifier.fillMaxWidth(0.8f))
+                    }
                 }
             } else {
                 Icon(
@@ -537,5 +595,42 @@ private fun SlotCell(
                 )
             }
         }
+    }
+}
+
+/** Stade de la culture d'une case, si elle a une plante connue et une date de mise en place. */
+private fun slotGrowth(slot: ParcelSlot?, vegetable: Vegetable?, today: LocalDate): Growth? {
+    val planted = slot?.plantedDate ?: return null
+    if (vegetable == null) return null
+    val plantedDate = Instant.ofEpochMilli(planted).atZone(ZoneId.systemDefault()).toLocalDate()
+    val days = ChronoUnit.DAYS.between(plantedDate, today).toInt()
+    return GrowthEngine.growth(days, vegetable.daysToHarvest, vegetable.harvestDurationWeeks)
+}
+
+/** La plante « pousse » : pousse, feuillage, puis le pictogramme du légume quand la récolte approche. */
+private fun stagePictogram(vegetable: Vegetable, growth: Growth?): String = when (growth?.stage) {
+    GrowthStage.SETTLING, GrowthStage.YOUNG -> "\uD83C\uDF31"
+    GrowthStage.GROWING -> "\uD83C\uDF3F"
+    GrowthStage.FINISHED -> "\uD83C\uDF42"
+    GrowthStage.ALMOST_READY, GrowthStage.READY, null -> vegetable.pictogram()
+}
+
+/** Jauge d'avancement vers la récolte. Décorative : le délai est toujours écrit à côté ou énoncé. */
+@Composable
+private fun GrowthBar(growth: Growth, height: Int, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height.dp)
+            .clip(RoundedCornerShape(50))
+            .background(SillonPalette.FurrowLine),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(growth.progress.coerceIn(0.04f, 1f))
+                .height(height.dp)
+                .clip(RoundedCornerShape(50))
+                .background(if (growth.stage == GrowthStage.READY) SillonPalette.Terracotta else SillonPalette.SproutGreen),
+        )
     }
 }
