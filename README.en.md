@@ -2,7 +2,7 @@
 
 [Français](README.md) · **English**
 
-[![Build](https://img.shields.io/badge/Build-Passing-2e7d32.svg)](https://github.com/Relthdrarxash/sillon)
+[![Build](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml/badge.svg)](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](app/src/main/AndroidManifest.xml)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen.svg)](app/build.gradle.kts)
@@ -11,7 +11,7 @@ An Android application for **living vegetable gardens & agronomic planning**, 10
 
 Designing a thriving and resilient food garden should not rely on folklore or arbitrary monthly calendars. Fixed-date schedules ignore regional climates and seasonal shifts, while commercial apps demand intrusive accounts, subscriptions, or upload private garden pictures to remote servers.
 
-**Sillon** brings evidence-based agronomy and plant biology straight into your pocket—operational even in the deepest rural dead zones: dynamic phenological planning indexed against median last frost dates ($J_{\text{frost}}$), spatial 2D allelopathy and companion planting analysis, 4-year crop rotation schedules to preserve soil microbiology, and fully local on-device leaf health diagnostics.
+**Sillon** brings evidence-based agronomy and plant biology straight into your pocket, operational even in the deepest rural dead zones: dynamic phenological planning indexed against median last frost dates ($J_{\text{frost}}$), spatial 2D allelopathy and companion planting analysis, 4-year crop rotation schedules to preserve soil microbiology, and fully local on-device leaf health diagnostics.
 
 ---
 
@@ -61,6 +61,7 @@ Like all applications created by **Pilmil Studio**, Sillon follows a strict ethi
 - **0 trackers, 0 telemetry, 0 ads:** Completely free of tracking SDKs (no Firebase, no Google Analytics, no third-party ad libraries).
 - **Sovereign, open data:** Your garden data belongs exclusively to you. Stored locally in human-readable JSON (`sillon_garden.json`).
 - **1-tap backup & restore:** Seamless JSON and CSV spreadsheet exports/imports via Android's native Storage Access Framework (SAF).
+- **No cloud backup:** the data is excluded from Android backup to Google. You choose: direct transfer to a new phone during its setup (Android 12 or later), or a JSON and CSV export saved wherever you want. Those files are not encrypted.
 - **Free & Open Source:** Published under the [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 ---
@@ -155,4 +156,4 @@ Sillon is free software distributed under the **[Mozilla Public License 2.0](LIC
 ## Contact & Feedback
 
 Agronomic questions, field feedback, and code contributions:  
-**Pilmil Studio** — [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)
+**Pilmil Studio**: [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)

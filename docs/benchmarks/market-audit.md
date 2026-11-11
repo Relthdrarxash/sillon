@@ -1,8 +1,8 @@
 # Audit Concurrentiel & Analyse Critique du Marché Numérique du Jardinage
 
-> **Document de référence stratégique et agronomique — Pilmil Studio**  
+> **Document de référence stratégique et agronomique, Pilmil Studio**  
 > **Auteur :** Pôle Stratégie & Ingénierie Logicielle Éthique  
-> **Cible de positionnement :** *Sillon — Potager vivant, planification au carré & calendrier phénoclimatique*  
+> **Cible de positionnement :** *Sillon : potager vivant, planification au carré & calendrier phénoclimatique*  
 > **Licence :** Document interne / Open Documentation (CC BY-SA 4.0)  
 > **Date de publication :** Novembre 2026  
 
@@ -254,26 +254,26 @@ Une veille attentive sur les plateformes d'avis (*Google Play Store*, *Apple App
 
 ### 1. La taxe surprise et la captivité commerciale (PictureThis, Planta)
 > *« J'ai téléchargé l'application pour identifier une plante dans mon nouveau potager. Après deux photos, écran bloqué me demandant mes identifiants bancaires pour un essai. J'ai cru fermer avec la croix minuscule... j'ai été débité de 39,99 € trois jours plus tard ! C'est du vol pur et simple organisé par des développeurs sans scrupules. »*  
-> — **Avis vérifié Google Play Store (PictureThis, France, 2025)**
+> Source : **Avis vérifié Google Play Store (PictureThis, France, 2025)**
 
 > *« Je cherchais un carnet pour mes tomates. Planta m'a harcelé d'écrans pour passer à la version Premium à 45 € par an ! 45 euros pour me dire de verser de l'eau dans un pot, c'est le prix de mes semences pour les cinq prochaines années. »*  
-> — **Fil Reddit r/houseplants, retour d'expérience application**
+> Source : **Fil Reddit r/houseplants, retour d'expérience application**
 
 ### 2. L'inutilité totale en zone blanche rurale
 > *« Mon potager se situe sur une parcelle partagée à 2 km du village, en creux de vallon où il n'y a ni 4G ni 5G. Planter et PictureThis refusent tout simplement de s'ouvrir ou restent bloqués sur un spinner infini. J'ai besoin de mes notes et de mes plans là où j'ai les mains dans la terre, pas dans mon salon sur le Wi-Fi de la maison ! »*  
-> — **Forum Tomodori / Tomates & Potager**
+> Source : **Forum Tomodori / Tomates & Potager**
 
 ### 3. Les plantes massacrées par les minuteurs d'arrosage
 > *« Planta m'a tué trois courgettes et un piment. L'application me disait d'arroser tous les 3 jours. J'ai suivi consciencieusement comme un idiot. Il avait plu toute la semaine, mon sol argileux était gorgé d'eau sous le paillage. Les racines ont complètement pourri noir au collet. Ces applications sont un poison pour les débutants qui ne savent pas encore tester la terre au doigt. »*  
-> — **Discussion r/gardening, "Why you shouldn't use plant care scheduling apps"**
+> Source : **Discussion r/gardening, "Why you shouldn't use plant care scheduling apps"**
 
 ### 4. Les diagnostics "IA" délirants et pousse-au-crime chimique
 > *« Mes feuilles de poivron commençaient à jaunir entre les nervures au mois de juin. PictureThis m'a diagnostiqué une rouille cryptogamique virulente avec recommandation de traitement cuprique immédiat. Heureusement, j'ai montré la feuille à mon grand-père jardinier : c'était une simple chlorose ferrique causée par mon eau d'arrosage trop calcaire. Un peu de purin d'ortie et du compost ont tout réglé en dix jours sans un gramme de produit chimique. »*  
-> — **Groupe d'entraide permaculturelle Facebook**
+> Source : **Groupe d'entraide permaculturelle Facebook**
 
 ### 5. La perte sèche des données après des années de saisie
 > *« J'ai utilisé une application de planification pendant trois saisons complètes en y consignant l'emplacement de chaque salade, chaque carotte et le calendrier de mes récoltes. L'éditeur a changé de politique, a supprimé l'ancienne formule et m'a réclamé un abonnement mensuel pour accéder à mes propres archives. Aucune option d'exportation de fichier. Mes trois ans d'historique de rotation sont pris en otage. Plus jamais ! »*  
-> — **Avis App Store, Jardinier urbain**
+> Source : **Avis App Store, Jardinier urbain**
 
 ---
 

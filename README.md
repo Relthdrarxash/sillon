@@ -2,7 +2,7 @@
 
 **Français** · [English](README.en.md)
 
-[![Build](https://img.shields.io/badge/Build-Passing-2e7d32.svg)](https://github.com/Relthdrarxash/sillon)
+[![Build](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml/badge.svg)](https://github.com/Relthdrarxash/sillon/actions/workflows/android.yml)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/Network-100%25%20Offline-orange.svg)](app/src/main/AndroidManifest.xml)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen.svg)](app/build.gradle.kts)
@@ -61,6 +61,7 @@ Comme l'ensemble des créations de **Pilmil Studio**, Sillon est conçu selon un
 - **0 traceur, 0 publicité, 0 télémétrie :** Aucun kit d'analyse (Google Analytics, Firebase, etc.) n'est embarqué dans le code binaire.
 - **Données souveraines & formats ouverts :** Votre potager vous appartient. Les données sont enregistrées localement dans un fichier JSON clair et accessible (`sillon_garden.json`).
 - **Sauvegarde & Restauration 1-tap :** Exportation et réimportation instantanées en JSON et au format tableur CSV (compatible LibreOffice Calc et Microsoft Excel) via le Storage Access Framework (SAF) d'Android.
+- **Pas de sauvegarde dans le nuage :** les données sont exclues de la sauvegarde Android vers Google. Vous choisissez : transfert direct vers un nouveau téléphone lors de sa configuration (Android 12 ou plus), ou export JSON et CSV enregistré où vous voulez. Ces fichiers ne sont pas chiffrés.
 - **Bien commun libre :** Publié sous licence [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 ---
@@ -155,4 +156,4 @@ Sillon est un logiciel libre distribué sous licence **[Mozilla Public License 2
 ## Contact & Contribution
 
 Questions agronomiques, retours de terrain et contributions :  
-**Pilmil Studio** — [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)
+**Pilmil Studio** : [pilmil.studio@proton.me](mailto:pilmil.studio@proton.me)
