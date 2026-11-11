@@ -29,7 +29,7 @@ Concevoir un potager nourricier et résilient ne s'improvise pas : les calendrie
 ### 2. Planificateur visuel de parcelles & carrés vivants
 - **Conception modulaire :** Créez vos carrés potagers surélevés (3x3, 4x4) ou planches de culture maraîchères en lignes.
 - **Densités adaptées :** Calcul automatique des densités au pied carré (*Square Foot Gardening* : 1, 4, 9 ou 16 plants/case) ou des écartements maraîchers traditionnels en centimètres.
-- **Visualisation d'occupation :** État d'avancement des cultures, jours écoulés depuis le repiquage et projection du créneau de récolte.
+- **Un potager qui pousse :** chaque case montre le stade de sa culture (installation, jeune plant, en croissance, bientôt prête, à récolter) avec une jauge et le délai avant la récolte, calculés à partir des durées du catalogue. Le stade est toujours écrit et énoncé par les lecteurs d'écran, jamais porté par l'image seule.
 
 ### 3. Moteur d'allélopathie & compagnonnage végétal (`CompanionEngine`)
 - **62 légumes, herbes aromatiques et fleurs compagnes** minutieusement modélisés (`VegetableCatalog`) avec leur famille botanique, besoins hydriques, exposition solaire et seuils thermiques de germination.

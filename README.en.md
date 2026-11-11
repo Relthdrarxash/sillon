@@ -29,7 +29,7 @@ Designing a thriving and resilient food garden should not rely on folklore or ar
 ### 2. Visual Garden Bed & Raised Square Planner
 - **Modular layouts:** Easily configure raised square beds (3x3, 4x4) or traditional in-ground row plots.
 - **Tailored densities:** Automatic calculation of Square Foot Gardening densities (1, 4, 9, or 16 plants per slot) or standard centimeter spacing between plants and rows.
-- **Growth tracking:** Visual slot status, days elapsed since transplanting, and projected harvest windows.
+- **A garden that grows:** each square shows the stage of its crop (settling in, young plant, growing, almost ready, ready to harvest) with a gauge and the time left before harvest, computed from the catalogue durations. The stage is always written and announced by screen readers, never carried by the picture alone.
 
 ### 3. Allelopathy & Companion Planting Engine (`CompanionEngine`)
 - **62 modeled vegetable crops, aromatic herbs, and companion flowers** (`VegetableCatalog`) with botanical families, water requirements, sun exposure, and germination temperature thresholds.

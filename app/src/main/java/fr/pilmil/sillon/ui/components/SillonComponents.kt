@@ -28,6 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -35,8 +40,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.pilmil.sillon.ui.theme.SillonPalette
 
+/** Bord inférieur épais façon « tuile en relief » : purement décoratif, sans effet sur la lisibilité. */
+fun Modifier.ledge(color: Color, radius: Float = 22f, depth: Float = 5f): Modifier = this
+    .padding(bottom = depth.dp)
+    .drawBehind {
+        val d = depth.dp.toPx()
+        drawRoundRect(
+            color = color,
+            topLeft = Offset(0f, d),
+            size = Size(size.width, size.height),
+            cornerRadius = CornerRadius(radius.dp.toPx()),
+        )
+    }
+
 /**
- * Carte artisanale Sillon — Fond clair papier lin, bordure subtile façon reliure.
+ * Carte artisanale Sillon — Fond crème, bordure franche et bord inférieur en relief.
  * Conçue pour une lisibilité optimale en plein soleil au jardin.
  */
 @Composable
@@ -47,21 +65,23 @@ fun SillonCard(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
+    val ledgeColor = if (isSystemInDarkTheme()) SillonPalette.LedgeDark else SillonPalette.LedgeLight
+    val base = modifier.ledge(ledgeColor, radius = 22f)
     val clickableModifier = if (onClick != null) {
-        modifier.clickable(onClick = onClick)
+        base.clip(RoundedCornerShape(22.dp)).clickable(onClick = onClick)
     } else {
-        modifier
+        base
     }
 
     Surface(
         modifier = clickableModifier,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(22.dp),
         color = backgroundColor,
-        border = BorderStroke(1.dp, borderColor),
+        border = BorderStroke(2.dp, borderColor),
         tonalElevation = 0.dp,
-        shadowElevation = 0.5.dp,
+        shadowElevation = 0.dp,
     ) {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(18.dp)) {
             content()
         }
     }
@@ -80,12 +100,14 @@ fun SillonButton(
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     enabled: Boolean = true,
 ) {
+    val shade = if (isSystemInDarkTheme()) SillonPalette.LedgeDark else SillonPalette.SageDark
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = 52.dp),
-        shape = RoundedCornerShape(14.dp),
+            .ledge(if (enabled) shade else Color.Transparent, radius = 18f, depth = 6f)
+            .defaultMinSize(minHeight = 56.dp),
+        shape = RoundedCornerShape(18.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,
@@ -133,8 +155,8 @@ fun SillonOutlinedButton(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 48.dp),
-        shape = RoundedCornerShape(14.dp),
-        border = BorderStroke(1.5.dp, borderColor),
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(2.dp, borderColor),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = textColor,
         ),
@@ -174,11 +196,11 @@ fun SillonBadge(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(50),
         color = containerColor,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (icon != null) {

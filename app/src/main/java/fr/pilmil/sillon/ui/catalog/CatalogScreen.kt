@@ -59,6 +59,7 @@ import fr.pilmil.sillon.model.BotanicalFamily
 import fr.pilmil.sillon.model.Vegetable
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonCard
+import fr.pilmil.sillon.ui.components.pictogram
 import fr.pilmil.sillon.ui.theme.SillonPalette
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
@@ -225,17 +226,12 @@ private fun VegetableCard(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(48.dp)
                         .clip(CircleShape)
                         .background(SillonPalette.SageContainer),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Eco,
-                        contentDescription = null,
-                        tint = SillonPalette.SageDark,
-                        modifier = Modifier.size(24.dp),
-                    )
+                    Text(text = vegetable.pictogram(), fontSize = 24.sp)
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
