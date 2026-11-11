@@ -1,27 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Rien n'est sauvegardé dans le nuage : les données ne passent jamais par un serveur de Google.
-    Le transfert direct vers un nouveau téléphone (câble ou sans fil, au moment de sa configuration)
-    reste possible : la personne le choisit, et les données vont d'un appareil à l'autre.
-    Ces règles s'appliquent à partir d'Android 12. Avant, android:fullBackupContent="@xml/backup_rules" coupe toute sauvegarde.
+    Règles de sauvegarde Android 12 et plus. SillonBackupAgent applique en plus le choix de la personne :
+    sauvegarde dans le compte Google désactivée par défaut, et jamais sans chiffrement de bout en bout.
+    Le transfert direct vers un nouveau téléphone reste toujours permis.
 -->
 <data-extraction-rules>
-    <cloud-backup>
-        <exclude domain="root" />
-        <exclude domain="file" />
-        <exclude domain="database" />
-        <exclude domain="sharedpref" />
-        <exclude domain="external" />
-        <exclude domain="device_root" />
-        <exclude domain="device_file" />
-        <exclude domain="device_database" />
-        <exclude domain="device_sharedpref" />
-    </cloud-backup>
-    <device-transfer>
-        <include domain="root" />
+    <cloud-backup disableIfNoEncryptionCapabilities="true">
         <include domain="file" />
         <include domain="database" />
         <include domain="sharedpref" />
-        <include domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="file" />
+        <include domain="database" />
+        <include domain="sharedpref" />
     </device-transfer>
 </data-extraction-rules>

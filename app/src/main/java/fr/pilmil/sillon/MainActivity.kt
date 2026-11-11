@@ -65,6 +65,8 @@ import fr.pilmil.sillon.ui.theme.SillonTheme
 import java.time.LocalDate
 import androidx.compose.runtime.saveable.rememberSaveable
 import fr.pilmil.sillon.data.FrenchFrostCatalog
+import fr.pilmil.sillon.backup.BackupPolicy
+import fr.pilmil.sillon.backup.CloudBackupConsent
 import fr.pilmil.sillon.data.SillonPrefs
 import fr.pilmil.sillon.engine.DashboardPlanner
 import fr.pilmil.sillon.reminders.SowingReminders
@@ -108,6 +110,11 @@ class MainActivity : ComponentActivity() {
                 var departmentCode by remember { mutableStateOf(prefs.departmentCode) }
                 var remindersOn by remember { mutableStateOf(prefs.sowingReminders) }
                 var smartViewfinderOn by remember { mutableStateOf(prefs.smartViewfinderEnabled) }
+                val cloudConsent = remember { CloudBackupConsent(noBackupFilesDir) }
+                var cloudBackupOn by remember { mutableStateOf(cloudConsent.enabled) }
+                val deviceSecure = remember {
+                    (getSystemService(android.content.Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager)?.isDeviceSecure == true
+                }
                 var pickingDepartment by remember { mutableStateOf(false) }
 
                 /** Applique une modification sur le fil disque, puis affiche le résultat et prévient si l'enregistrement a échoué. */
@@ -325,6 +332,13 @@ class MainActivity : ComponentActivity() {
                                     } else {
                                         setReminders(on)
                                     }
+                                },
+                                cloudBackupAvailable = BackupPolicy.settingAvailable(android.os.Build.VERSION.SDK_INT),
+                                cloudBackupPossible = deviceSecure,
+                                cloudBackupOn = cloudBackupOn,
+                                onCloudBackupChange = { on ->
+                                    cloudConsent.enabled = on
+                                    cloudBackupOn = on
                                 },
                                 smartViewfinderOn = smartViewfinderOn,
                                 onSmartViewfinderChange = { on ->
