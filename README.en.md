@@ -61,7 +61,7 @@ Like all applications created by **Pilmil Studio**, Sillon follows a strict ethi
 - **0 trackers, 0 telemetry, 0 ads:** Completely free of tracking SDKs (no Firebase, no Google Analytics, no third-party ad libraries).
 - **Sovereign, open data:** Your garden data belongs exclusively to you. Stored locally in human-readable JSON (`sillon_garden.json`).
 - **1-tap backup & restore:** Seamless JSON and CSV spreadsheet exports/imports via Android's native Storage Access Framework (SAF).
-- **No cloud backup:** the data is excluded from Android backup to Google. You choose: direct transfer to a new phone during its setup (Android 12 or later), or a JSON and CSV export saved wherever you want. Those files are not encrypted.
+- **No cloud backup on our side:** Sillon sends nothing and has no server. Android's own backup to the person's Google account stays allowed: Android handles it, if the person turned it on for their phone. Direct transfer to a new phone and a JSON and CSV export saved wherever you want remain possible. Those files are not encrypted.
 - **Free & Open Source:** Published under the [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 ---

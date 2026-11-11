@@ -61,7 +61,7 @@ Comme l'ensemble des créations de **Pilmil Studio**, Sillon est conçu selon un
 - **0 traceur, 0 publicité, 0 télémétrie :** Aucun kit d'analyse (Google Analytics, Firebase, etc.) n'est embarqué dans le code binaire.
 - **Données souveraines & formats ouverts :** Votre potager vous appartient. Les données sont enregistrées localement dans un fichier JSON clair et accessible (`sillon_garden.json`).
 - **Sauvegarde & Restauration 1-tap :** Exportation et réimportation instantanées en JSON et au format tableur CSV (compatible LibreOffice Calc et Microsoft Excel) via le Storage Access Framework (SAF) d'Android.
-- **Pas de sauvegarde dans le nuage :** les données sont exclues de la sauvegarde Android vers Google. Vous choisissez : transfert direct vers un nouveau téléphone lors de sa configuration (Android 12 ou plus), ou export JSON et CSV enregistré où vous voulez. Ces fichiers ne sont pas chiffrés.
+- **Aucune sauvegarde dans le nuage de notre côté :** Sillon n'envoie rien et n'a aucun serveur. La sauvegarde Android vers le compte Google de la personne reste autorisée : c'est Android qui la gère, si elle l'a activée sur son téléphone. Le transfert direct vers un nouveau téléphone et l'export JSON et CSV enregistré où vous voulez restent possibles. Ces fichiers ne sont pas chiffrés.
 - **Bien commun libre :** Publié sous licence [Mozilla Public License 2.0](LICENSE) (MPL-2.0).
 
 ---

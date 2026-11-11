@@ -137,7 +137,7 @@ priv = """<main class="wrap doc">
 <h2>Données conservées sur le téléphone</h2>
 <p>Le plan de votre potager et vos réglages sont enregistrés dans l'espace privé de l'application. Ils sont supprimés si vous désinstallez l'application ou effacez ses données.</p>
 <h2>Sauvegarde</h2>
-<p>La sauvegarde est un fichier que vous enregistrez vous-même à l'endroit de votre choix. Sillon ne l'envoie nulle part.</p>
+<p>La sauvegarde est un fichier que vous enregistrez vous-même à l'endroit de votre choix. Sillon ne l'envoie nulle part. La sauvegarde automatique d'Android vers votre compte Google est autorisée : c'est Android qui la gère, uniquement si vous l'avez activée sur votre téléphone, et Sillon n'y participe pas.</p>
 <h2>Contact</h2>
 <p>Une question sur la vie privée : <strong>pilmil.studio@proton.me</strong>. Le code source est public et peut être relu sur GitHub.</p>
 </main>"""

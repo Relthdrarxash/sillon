@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Sauvegarde automatique Android 6 à 11 : tout est exclu, l'appli se veut 100 % hors ligne. -->
+<!-- Sauvegarde automatique Android 6 à 11 : autorisée. Elle est gérée par Android, Sillon n'envoie rien lui-même. -->
 <full-backup-content>
-    <exclude domain="root" />
-    <exclude domain="file" />
-    <exclude domain="database" />
-    <exclude domain="sharedpref" />
-    <exclude domain="external" />
+        <include domain="root" />
+        <include domain="file" />
+        <include domain="database" />
+        <include domain="sharedpref" />
+        <include domain="external" />
 </full-backup-content>
