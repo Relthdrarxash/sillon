@@ -5,3 +5,8 @@ local.properties
 .idea/
 *.iml
 distribution/
+
+# Keystores : jamais de clé de release dans le dépôt (seule la clé de debug publique est suivie)
+*.keystore
+*.jks
+!app/sillon-debug.keystore

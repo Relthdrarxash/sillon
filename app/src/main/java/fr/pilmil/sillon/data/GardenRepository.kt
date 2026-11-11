@@ -7,60 +7,104 @@ import fr.pilmil.sillon.model.Garden
 import fr.pilmil.sillon.model.Parcel
 import fr.pilmil.sillon.model.ParcelSlot
 import fr.pilmil.sillon.model.ParcelType
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
-class GardenRepository(private val context: Context) {
+/** Résultat d'une modification : le potager à afficher, et si son enregistrement sur disque a réussi. */
+data class GardenUpdate(val garden: Garden, val saved: Boolean)
 
-    private val json = Json {
-        prettyPrint = true
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+class GardenRepository(private val dir: File) {
+
+    constructor(context: Context) : this(context.filesDir)
 
     private val gardenFile: File
-        get() = File(context.filesDir, "sillon_garden.json")
+        get() = File(dir, FILE_NAME)
+
+    @Volatile
+    private var recoveryNotice = false
+
+    /**
+     * Vrai (une seule fois) si le dernier chargement a dû écarter un fichier illisible :
+     * l'interface doit alors prévenir la personne que son potager est reparti de zéro.
+     */
+    fun consumeRecoveryNotice(): Boolean {
+        val pending = recoveryNotice
+        recoveryNotice = false
+        return pending
+    }
 
     /**
      * Charge le potager sauvegardé en local ou crée un potager initial bienveillant.
+     * Un fichier illisible n'est jamais écrasé : il est mis de côté en `.corrupt-<horodatage>`.
      */
+    @Synchronized
     fun loadGarden(): Garden {
+        if (!gardenFile.exists()) return createDefaultGarden().also { saveGarden(it) }
+        val content = try {
+            gardenFile.readText(StandardCharsets.UTF_8)
+        } catch (e: IOException) {
+            // Lecture impossible (et non contenu invalide) : on n'écarte rien, on ne réécrit pas.
+            e.printStackTrace()
+            return createDefaultGarden()
+        }
         return try {
-            if (gardenFile.exists()) {
-                val content = gardenFile.readText(StandardCharsets.UTF_8)
-                json.decodeFromString<Garden>(content)
-            } else {
-                createDefaultGarden().also { saveGarden(it) }
-            }
+            GardenCodec.decode(content)
         } catch (e: Exception) {
             e.printStackTrace()
-            createDefaultGarden()
+            quarantineCorruptFile()
+            recoveryNotice = true
+            createDefaultGarden().also { saveGarden(it) }
         }
     }
 
-    /**
-     * Sauvegarde atomique du potager en local.
-     */
-    fun saveGarden(garden: Garden) {
+    private fun quarantineCorruptFile() {
+        val target = File(dir, "$FILE_NAME.corrupt-${System.currentTimeMillis()}")
         try {
-            val content = json.encodeToString(garden)
-            val tempFile = File(context.filesDir, "sillon_garden.json.tmp")
-            tempFile.writeText(content, StandardCharsets.UTF_8)
-            tempFile.renameTo(gardenFile)
+            Files.move(gardenFile.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        // On ne garde que les 3 copies les plus récentes (l'horodatage trie les noms).
+        dir.listFiles { f -> f.name.startsWith("$FILE_NAME.corrupt-") }
+            ?.sortedByDescending { it.name }
+            ?.drop(MAX_CORRUPT_COPIES)
+            ?.forEach { it.delete() }
+    }
+
+    /**
+     * Sauvegarde atomique du potager : écriture dans un fichier temporaire, fsync, puis renommage.
+     * Renvoie false si l'écriture a échoué (l'ancien fichier reste alors intact).
+     */
+    @Synchronized
+    fun saveGarden(garden: Garden): Boolean {
+        val tempFile = File(dir, "$FILE_NAME.tmp")
+        return try {
+            val bytes = GardenCodec.encode(garden).toByteArray(StandardCharsets.UTF_8)
+            FileOutputStream(tempFile).use { out ->
+                out.write(bytes)
+                out.fd.sync()
+            }
+            Files.move(tempFile.toPath(), gardenFile.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
+            true
         } catch (e: Exception) {
             e.printStackTrace()
+            tempFile.delete()
+            false
         }
     }
 
     /**
      * Modifie une case spécifique d'une parcelle.
      */
-    fun updateSlot(parcelId: String, row: Int, col: Int, vegetableId: String?): Garden {
+    @Synchronized
+    fun updateSlot(parcelId: String, row: Int, col: Int, vegetableId: String?): GardenUpdate {
         val currentGarden = loadGarden()
         val updatedParcels = currentGarden.parcels.map { parcel ->
             if (parcel.id == parcelId) {
@@ -80,14 +124,14 @@ class GardenRepository(private val context: Context) {
             }
         }
         val updatedGarden = currentGarden.copy(parcels = updatedParcels)
-        saveGarden(updatedGarden)
-        return updatedGarden
+        return GardenUpdate(updatedGarden, saveGarden(updatedGarden))
     }
 
     /**
      * Ajoute une nouvelle parcelle (ex. Carré potager 3x3 ou Planche en lignes).
      */
-    fun addParcel(name: String, type: ParcelType, rows: Int, cols: Int): Garden {
+    @Synchronized
+    fun addParcel(name: String, type: ParcelType, rows: Int, cols: Int): GardenUpdate {
         val currentGarden = loadGarden()
         val newParcel = Parcel(
             id = "parcel_${System.currentTimeMillis()}",
@@ -98,28 +142,27 @@ class GardenRepository(private val context: Context) {
             slots = emptyList(),
         )
         val updated = currentGarden.copy(parcels = currentGarden.parcels + newParcel)
-        saveGarden(updated)
-        return updated
+        return GardenUpdate(updated, saveGarden(updated))
     }
 
     /**
      * Supprime une parcelle.
      */
-    fun deleteParcel(parcelId: String): Garden {
+    @Synchronized
+    fun deleteParcel(parcelId: String): GardenUpdate {
         val current = loadGarden()
         val updated = current.copy(parcels = current.parcels.filterNot { it.id == parcelId })
-        saveGarden(updated)
-        return updated
+        return GardenUpdate(updated, saveGarden(updated))
     }
 
     /**
      * Met à jour la date repère des dernières gelées.
      */
-    fun updateFrostDate(month: Int, day: Int): Garden {
+    @Synchronized
+    fun updateFrostDate(month: Int, day: Int): GardenUpdate {
         val current = loadGarden()
         val updated = current.copy(frostDate = FrostDate(month, day))
-        saveGarden(updated)
-        return updated
+        return GardenUpdate(updated, saveGarden(updated))
     }
 
     /**
@@ -128,23 +171,42 @@ class GardenRepository(private val context: Context) {
      */
     fun exportToJson(outputStream: OutputStream) {
         val garden = loadGarden()
-        val content = json.encodeToString(garden)
+        val content = GardenCodec.encode(garden)
         outputStream.write(content.toByteArray(StandardCharsets.UTF_8))
         outputStream.flush()
     }
 
     /**
-     * Import d'une sauvegarde JSON avec validation de structure.
+     * Import d'une sauvegarde JSON : bornes et catalogue validés, ancien potager copié en `.bak` avant remplacement.
+     * L'échec porte un [GardenValidationException] quand le fichier est refusé.
      */
+    @Synchronized
     fun importFromJson(inputStream: InputStream): Result<Garden> {
         return try {
-            val content = inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
-            val importedGarden = json.decodeFromString<Garden>(content)
-            saveGarden(importedGarden)
+            val content = inputStream.bufferedReader(StandardCharsets.UTF_8).use { reader ->
+                val buffer = CharArray(GardenCodec.MAX_FILE_CHARS + 1)
+                val read = reader.readFully(buffer)
+                String(buffer, 0, read)
+            }
+            val importedGarden = GardenCodec.decodeAndValidate(content)
+            if (gardenFile.exists()) {
+                Files.copy(gardenFile.toPath(), File(dir, "$FILE_NAME.bak").toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+            if (!saveGarden(importedGarden)) throw IOException("Écriture du potager importé impossible")
             Result.success(importedGarden)
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    private fun java.io.Reader.readFully(buffer: CharArray): Int {
+        var total = 0
+        while (total < buffer.size) {
+            val n = read(buffer, total, buffer.size - total)
+            if (n < 0) break
+            total += n
+        }
+        return total
     }
 
     /**
@@ -202,5 +264,10 @@ class GardenRepository(private val context: Context) {
             frostDate = FrostDate(month = 5, day = 15), // Par défaut mi-mai (Saints de Glace)
             parcels = listOf(defaultParcel),
         )
+    }
+
+    private companion object {
+        const val FILE_NAME = "sillon_garden.json"
+        const val MAX_CORRUPT_COPIES = 3
     }
 }

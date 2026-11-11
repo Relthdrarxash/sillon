@@ -11,3 +11,5 @@ __pycache__/
 .ipynb_checkpoints/
 out/
 plantdoc_cache/
+plantdoc_small/
+plantvillage_small/
