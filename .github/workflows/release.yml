@@ -26,6 +26,8 @@ jobs:
       PACKAGE_NAME: fr.pilmil.sillon
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - uses: actions/setup-java@v4
         with:

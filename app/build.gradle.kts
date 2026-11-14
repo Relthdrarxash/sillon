@@ -87,6 +87,7 @@ gradle.taskGraph.whenReady {
 }
 
 dependencies {
+    implementation("fr.pilmil.core:core-platform:0.1.0")
     val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom)
     implementation("androidx.compose.ui:ui")
