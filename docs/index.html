@@ -100,78 +100,94 @@ h2 { font-size:clamp(1.6rem,4vw,2.3rem); line-height:1.1; margin:0 0 8px; text-w
   <p class="sub">Captures réalisées avec des données d'exemple.</p>
 </section>
 <section class="wrap" id="simulateur">
-  <h2>Simulateur de saison &amp; croissance</h2>
-  <p class="sub">Choisissez un département et faites glisser la période pour simuler les gelées, les semis et l'évolution d'une parcelle.</p>
-  <div style="border:1px solid var(--line);border-radius:20px;padding:22px;background:var(--panel);display:grid;gap:16px">
-    <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
-      <label>Département / climat
-        <select id="si-dept" style="width:100%;font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg)">
-          <option value="105">Ille-et-Vilaine (35) · Gelées ~15 avril</option>
-          <option value="112">Île-de-France (75) · Gelées ~22 avril</option>
-          <option value="132">Auvergne (63) · Gelées ~12 mai</option>
-          <option value="84">Bouches-du-Rhône (13) · Gelées ~25 mars</option>
-          <option value="130">Alsace (67) · Gelées ~10 mai</option>
-          <option value="0">La Réunion (974) · Climat tropical</option>
-        </select>
-      </label>
-      <label>Période simulée : <strong id="si-date-label">15 mai</strong>
-        <input id="si-day" type="range" min="45" max="285" value="135" style="width:100%">
-      </label>
-    </div>
-    <p id="si-frost" style="margin:0;font-weight:700"></p>
-    <div id="si-tasks" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"></div>
-    <div id="si-growth" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">1. Semis / Graine</div>
-      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">2. Jeune pousse</div>
-      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">3. Feuillage</div>
-      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">4. Récolte</div>
+  <h2>Essayer l'application en direct</h2>
+  <p class="sub">Naviguez dans cet aperçu interactif pour vous projeter dans l'usage quotidien de Sillon.</p>
+  <div style="display:flex;justify-content:center">
+    <div style="width:min(340px,100%);border:8px solid #1e1d1a;border-radius:32px;background:#faf8f4;color:#1c1b18;overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,.22);font-size:14px">
+      <div style="background:#2c6e49;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-weight:700">
+        <span>Sillon</span><span style="font-size:11px;opacity:.85">Hors-ligne · Ille-et-Vilaine (35)</span>
+      </div>
+      <div id="si-screen" style="padding:14px;min-height:360px;display:grid;gap:10px;align-content:start;background:linear-gradient(180deg,rgba(44,110,73,.09),#faf8f4 45%)"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #e4dfd4;background:#fff">
+        <button type="button" class="si-tab" data-tab="home" style="padding:10px 4px;border:0;background:none;font:inherit;font-weight:700;color:#2c6e49;cursor:pointer">Aujourd'hui</button>
+        <button type="button" class="si-tab" data-tab="garden" style="padding:10px 4px;border:0;background:none;font:inherit;font-weight:600;color:#666;cursor:pointer">Potager</button>
+        <button type="button" class="si-tab" data-tab="doctor" style="padding:10px 4px;border:0;background:none;font:inherit;font-weight:600;color:#666;cursor:pointer">Docteur</button>
+      </div>
     </div>
   </div>
 </section>
 <script>
 (function(){
-  const MONTHS = ["janv.","févr.","mars","avril","mai","juin","juil.","août","sept.","oct.","nov."];
-  function dayToLabel(doy) {
-    const dt = new Date(2026, 0, doy);
-    return `${dt.getDate()} ${MONTHS[dt.getMonth()]}`;
-  }
-  function update() {
-    const frostDoy = parseInt(document.getElementById("si-dept").value, 10);
-    const doy = parseInt(document.getElementById("si-day").value, 10);
-    document.getElementById("si-date-label").textContent = dayToLabel(doy);
-    const diff = doy - frostDoy;
-    const frostEl = document.getElementById("si-frost");
-    if (frostDoy === 0) {
-      frostEl.textContent = "Zone tropicale : plantation toute l'année selon l'humidité.";
-    } else if (diff < 0) {
-      frostEl.textContent = `Dernières gelées repères dans ${-diff} jours (${dayToLabel(frostDoy)}).`;
-    } else {
-      frostEl.textContent = `Dernières gelées passées depuis ${diff} jours (${dayToLabel(frostDoy)}).`;
-    }
-    const cards = [];
-    if (frostDoy === 0 || diff < -14) {
-      cards.push({ t: "Semis sous abri", c: "Tomate, Poivron, Aubergine, Basilic" });
-      cards.push({ t: "Pleine terre rustique", c: "Pois, Fève, Épinard, Radis" });
-    } else if (diff >= -14 && diff <= 20) {
-      cards.push({ t: "Pleine terre", c: "Carotte, Betterave, Haricot, Courgette" });
-      cards.push({ t: "Repiquage", c: "Laitue, Chou, Tomate (après gelées)" });
-    } else if (diff > 20 && diff <= 95) {
-      cards.push({ t: "Entretien & paillage", c: "Tomate, Courgette, Concombre, Basilic" });
-      cards.push({ t: "Récoltes en cours", c: "Radis, Laitue, Pois, premières Courgettes" });
-    } else {
-      cards.push({ t: "Semis d'automne", c: "Mâche, Épinard, Radis noir, Navet" });
-      cards.push({ t: "Récoltes de garde", c: "Courge, Tomate tardive, Haricot sec" });
-    }
-    document.getElementById("si-tasks").innerHTML = cards.map(x => `<div style="padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--bg)"><h3 style="margin:0 0 6px;font-size:1rem">${x.t}</h3><p style="margin:0;font-size:0.92rem;color:var(--muted)">${x.c}</p></div>`).join("");
-    const stageIdx = frostDoy === 0 ? 2 : (diff < 0 ? 0 : diff < 35 ? 1 : diff < 75 ? 2 : 3);
-    Array.from(document.getElementById("si-growth").children).forEach((el, i) => {
-      el.style.borderColor = i === stageIdx ? "var(--accent, #2c6e49)" : "var(--line)";
-      el.style.fontWeight = i === stageIdx ? "700" : "400";
+  let tab = "home", horizon = 0, growthDay = 38, organ = "feuille";
+  const horizons = [
+    { label: "Aujourd'hui", frost: "Dernières gelées passées (15 avril)", tasks: ["Semis pleine terre : Carotte, Haricot", "Repiquage : Laitue, Tomate"] },
+    { label: "+3 jours", frost: "Risque de gel nul", tasks: ["Semis pleine terre : Courgette, Betterave", "Paillage des rangs"] },
+    { label: "+7 jours", frost: "Sol réchauffé", tasks: ["Repiquage : Basilic, Courge", "Récolte : Radis, Épinard"] },
+    { label: "+15 jours", frost: "Pleine saison", tasks: ["À récolter : Laitue, Pois", "Taille et tuteurage : Tomate"] }
+  ];
+  const crops = ["Tomate", "Basilic", "Laitue", "Carotte", "Radis", "Courgette"];
+  function render() {
+    const scr = document.getElementById("si-screen");
+    document.querySelectorAll(".si-tab").forEach(b => {
+      const act = b.dataset.tab === tab;
+      b.style.color = act ? "#2c6e49" : "#6b675e";
+      b.style.fontWeight = act ? "700" : "500";
     });
+    if (tab === "home") {
+      const h = horizons[horizon];
+      scr.innerHTML = `
+        <div style="font-weight:800;font-size:17px">Au potager aujourd'hui</div>
+        <div style="background:#fff;border:1px solid #e4dfd4;border-radius:14px;padding:10px">
+          <div style="font-weight:700;font-size:13px">${h.frost}</div>
+          <div style="font-size:12px;color:#5a574f">2 parcelles · 6 cultures en place</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${horizons.map((x,i) => `<button type="button" data-h="${i}" style="padding:5px 10px;border-radius:999px;border:1px solid ${i===horizon?'#2c6e49':'#d8d2c5'};background:${i===horizon?'#2c6e49':'#fff'};color:${i===horizon?'#fff':'#1c1b18'};font-size:12px;cursor:pointer">${x.label}</button>`).join("")}
+        </div>
+        ${h.tasks.map(t => `<div style="background:#fff;border:1px solid #e4dfd4;border-radius:14px;padding:10px;font-size:13px">${t}</div>`).join("")}
+      `;
+    } else if (tab === "garden") {
+      const stage = growthDay < 15 ? "Graine" : growthDay < 35 ? "Pousse" : growthDay < 60 ? "Feuillage" : "Récolte";
+      const hPx = Math.min(32, Math.max(8, Math.round(growthDay * 0.42)));
+      scr.innerHTML = `
+        <div style="font-weight:800;font-size:17px">Planche Sud (2 × 3)</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          ${crops.map(c => `<div style="background:#ebe5d8;border:1px solid #d5ccb9;border-radius:12px;padding:10px 4px;text-align:center">
+            <div style="height:34px;display:flex;align-items:flex-end;justify-content:center">
+              <div style="width:14px;height:${hPx}px;border-radius:7px 7px 2px 2px;background:#2c6e49"></div>
+            </div>
+            <div style="font-weight:700;font-size:12px;margin-top:4px">${c}</div>
+            <div style="font-size:10px;color:#5a574f">${stage}</div>
+          </div>`).join("")}
+        </div>
+        <label style="font-size:12px;color:#5a574f">Voir pousser : <strong>+${growthDay} jours</strong>
+          <input id="si-grow" type="range" min="5" max="80" value="${growthDay}" style="width:100%">
+        </label>
+      `;
+    } else {
+      const diag = organ === "feuille"
+        ? "Taches brunes / feutrage blanc → Mildiou ou Oïdium. Évitez d'arroser le feuillage le soir."
+        : "Tige sectionnée au collet → Noctuelle ou limace. Vérifiez au paillage et protégez les jeunes plants.";
+      scr.innerHTML = `
+        <div style="font-weight:800;font-size:17px">Docteur du potager</div>
+        <div style="font-size:12px;color:#5a574f">Organe touché :</div>
+        <div style="display:flex;gap:8px">
+          <button type="button" data-org="feuille" style="flex:1;padding:8px;border-radius:10px;border:1px solid ${organ==='feuille'?'#2c6e49':'#d8d2c5'};background:${organ==='feuille'?'#2c6e49':'#fff'};color:${organ==='feuille'?'#fff':'#1c1b18'};cursor:pointer">Feuille</button>
+          <button type="button" data-org="tige" style="flex:1;padding:8px;border-radius:10px;border:1px solid ${organ==='tige'?'#2c6e49':'#d8d2c5'};background:${organ==='tige'?'#2c6e49':'#fff'};color:${organ==='tige'?'#fff':'#1c1b18'};cursor:pointer">Tige / collet</button>
+        </div>
+        <div style="background:#fff;border:1px solid #e4dfd4;border-radius:14px;padding:12px;font-size:13px;line-height:1.45">${diag}</div>
+      `;
+    }
   }
-  document.getElementById("si-dept").addEventListener("change", update);
-  document.getElementById("si-day").addEventListener("input", update);
-  update();
+  document.getElementById("simulateur").addEventListener("click", (e) => {
+    const t = e.target.closest(".si-tab"); if (t) { tab = t.dataset.tab; render(); return; }
+    const h = e.target.closest("[data-h]"); if (h) { horizon = parseInt(h.dataset.h, 10); render(); return; }
+    const o = e.target.closest("[data-org]"); if (o) { organ = o.dataset.org; render(); }
+  });
+  document.getElementById("simulateur").addEventListener("input", (e) => {
+    if (e.target.id === "si-grow") { growthDay = parseInt(e.target.value, 10); render(); }
+  });
+  render();
 })();
 </script>
 <section class="wrap" id="vie-privee">
