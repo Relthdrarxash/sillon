@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -325,6 +326,14 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 22.sp,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    val uriHandler = LocalUriHandler.current
+                    SillonOutlinedButton(
+                        text = "Contact : pilmil.studio@proton.me",
+                        onClick = {
+                            runCatching { uriHandler.openUri("mailto:pilmil.studio@proton.me?subject=Sillon") }
+                        },
                     )
                 }
             }
