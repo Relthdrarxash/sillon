@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocalFlorist
 import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.pilmil.sillon.engine.DashboardPlan
 import fr.pilmil.sillon.engine.FrostStatus
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.theme.SillonPalette
@@ -49,8 +51,8 @@ import java.util.Locale
 private val dayMonth: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale.FRENCH)
 
 /**
- * Accueil : les travaux de la quinzaine calculés à partir de la date de gelée du jardin,
- * et non une liste figée. En morte-saison, on annonce la date des prochains semis.
+ * Accueil : les travaux de la quinzaine calculés à partir de la date de gelée du jardin
+ * (ou du début de saison de plantation en outre-mer), et non une liste figée. En morte-saison, on annonce la date des prochains semis.
  */
 @Composable
 fun DashboardScreen(
@@ -61,6 +63,7 @@ fun DashboardScreen(
     onNavigateToCatalog: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
 ) {
+    val tropical = plan.climate == Climate.TROPICAL
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -80,14 +83,14 @@ fun DashboardScreen(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Calculé pour votre date de dernières gelées.",
+                    text = if (tropical) "Calculé pour le début de votre saison de plantation." else "Calculé pour votre date de dernières gelées.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
 
-        item { FrostCard(plan.frost, placeLabel, onOpenSettings) }
+        item { FrostCard(plan.frost, placeLabel, tropical, onOpenSettings) }
 
         item {
             Text(
@@ -99,6 +102,17 @@ fun DashboardScreen(
                     .padding(top = 8.dp)
                     .semantics { heading() },
             )
+        }
+
+        if (tropical) {
+            item {
+                Text(
+                    text = "Seules les cultures tropicales ont un calendrier ici : les plantes tempérées restent plantables dans vos parcelles, sans tâches de calendrier.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 20.sp,
+                )
+            }
         }
 
         if (plan.isEmpty) {
@@ -183,18 +197,18 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun FrostCard(frost: FrostStatus, placeLabel: String?, onOpenSettings: () -> Unit) {
+private fun FrostCard(frost: FrostStatus, placeLabel: String?, tropical: Boolean, onOpenSettings: () -> Unit) {
     SillonCard(
         backgroundColor = MaterialTheme.colorScheme.surface,
         borderColor = MaterialTheme.colorScheme.outline,
     ) {
         Column {
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                IconBubble(Icons.Filled.AcUnit, SillonPalette.Sage)
+                IconBubble(if (tropical) Icons.Filled.WbSunny else Icons.Filled.AcUnit, SillonPalette.Sage)
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Dernières gelées repères",
+                        text = if (tropical) "Début de la saison de plantation" else "Dernières gelées repères",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold,
@@ -217,14 +231,23 @@ private fun FrostCard(frost: FrostStatus, placeLabel: String?, onOpenSettings: (
                         textColor = SillonPalette.AlertAmber,
                     )
                     is FrostStatus.Passed -> SillonBadge(
-                        text = "Passées",
+                        text = if (tropical) "Commencée" else "Passées",
                         containerColor = SillonPalette.SageContainer,
                         textColor = SillonPalette.SageDark,
                     )
                 }
             }
+            if (tropical) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Date estimée, modifiable dans les Réglages : elle varie de 1 à 2 mois selon les sources et les microclimats.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 20.sp,
+                )
+            }
             if (placeLabel == null) {
-                TextButton(onClick = onOpenSettings) { Text("Ajuster à mon département") }
+                TextButton(onClick = onOpenSettings) { Text("Ajuster à mon département ou territoire") }
             }
         }
     }

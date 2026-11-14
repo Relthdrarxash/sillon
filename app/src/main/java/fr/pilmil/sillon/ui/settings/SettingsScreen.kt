@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.CloudOff
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonButton
 import fr.pilmil.sillon.ui.components.SillonCard
@@ -48,6 +50,7 @@ import fr.pilmil.sillon.ui.theme.SillonPalette
 fun SettingsScreen(
     frostMonth: Int = 5,
     frostDay: Int = 15,
+    climate: Climate = Climate.TEMPERATE,
     onFrostDateChange: (Int, Int) -> Unit = { _, _ -> },
     onExportJson: () -> Unit = {},
     onImportJson: () -> Unit = {},
@@ -99,14 +102,14 @@ fun SettingsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Filled.AcUnit,
+                            imageVector = if (climate == Climate.TROPICAL) Icons.Filled.WbSunny else Icons.Filled.AcUnit,
                             contentDescription = null,
                             tint = SillonPalette.Sage,
                             modifier = Modifier.size(24.dp),
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Date repère des dernières gelées",
+                            text = if (climate == Climate.TROPICAL) "Début de la saison de plantation" else "Date repère des dernières gelées",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
@@ -114,7 +117,11 @@ fun SettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "En France métropolitaine, la date médiane se situe entre mi-mars (zone méditerranéenne) et mi-mai (Saints de Glace en plaine / montagne). Tous les travaux et rappels de semis sont calculés par rapport à ce jour J.",
+                        text = if (climate == Climate.TROPICAL) {
+                            "En outre-mer, il n'y a pas de gelée : le calendrier part du début de la saison de plantation de votre territoire. Cette date est une estimation, qui varie de 1 à 2 mois selon les sources et les microclimats : ajustez-la au jour près. Tous les travaux et rappels de semis sont calculés par rapport à ce jour."
+                        } else {
+                            "En France métropolitaine, la date médiane se situe entre mi-mars (zone méditerranéenne) et mi-mai (Saints de Glace en plaine / montagne). Tous les travaux et rappels de semis sont calculés par rapport à ce jour J."
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 20.sp,
@@ -144,7 +151,7 @@ fun SettingsScreen(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     SillonOutlinedButton(
-                        text = departmentLabel?.let { "Département : $it" } ?: "Choisir mon département",
+                        text = departmentLabel?.let { "Lieu : $it" } ?: "Choisir mon département ou territoire",
                         icon = Icons.Filled.Place,
                         onClick = onPickDepartment,
                     )

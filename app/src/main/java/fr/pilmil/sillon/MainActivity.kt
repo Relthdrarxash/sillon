@@ -57,6 +57,7 @@ import fr.pilmil.sillon.model.SunExposure
 import fr.pilmil.sillon.model.Vegetable
 import fr.pilmil.sillon.model.WaterNeed
 import fr.pilmil.sillon.ui.catalog.CatalogScreen
+import fr.pilmil.sillon.ui.components.SillonScaffold
 import fr.pilmil.sillon.ui.dashboard.DashboardScreen
 import fr.pilmil.sillon.ui.doctor.DoctorScreen
 import fr.pilmil.sillon.ui.garden.GardenScreen
@@ -67,6 +68,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import fr.pilmil.sillon.data.FrenchFrostCatalog
 import fr.pilmil.sillon.data.SillonPrefs
 import fr.pilmil.sillon.engine.DashboardPlanner
+import fr.pilmil.sillon.engine.FrostEngine
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.reminders.SowingReminders
 import fr.pilmil.sillon.ui.onboarding.DepartmentDialog
 import fr.pilmil.sillon.ui.onboarding.OnboardingScreen
@@ -106,6 +109,8 @@ class MainActivity : ComponentActivity() {
                 val scope = rememberCoroutineScope()
                 var onboarded by remember { mutableStateOf(prefs.onboarded) }
                 var departmentCode by remember { mutableStateOf(prefs.departmentCode) }
+                // Le climat découle du département : tempéré tant qu'aucun n'est choisi.
+                val climate = FrenchFrostCatalog.getClimate(departmentCode)
                 var remindersOn by remember { mutableStateOf(prefs.sowingReminders) }
                 var smartViewfinderOn by remember { mutableStateOf(prefs.smartViewfinderEnabled) }
                 var pickingDepartment by remember { mutableStateOf(false) }
@@ -120,7 +125,16 @@ class MainActivity : ComponentActivity() {
                 }
 
                 LaunchedEffect(Unit) {
-                    loadedGarden = withContext(disk) { repository.loadGarden() }
+                    loadedGarden = withContext(disk) {
+                        val loaded = repository.loadGarden()
+                        // Avant le pack tropical, les DOM avaient une « gelée » fictive au 1er janvier : on la remplace par le début de saison.
+                        val dep = prefs.department
+                        if (dep?.climate == Climate.TROPICAL && loaded.frostDate == FrostDate(1, 1)) {
+                            repository.updateFrostDate(dep.seasonStart.month, dep.seasonStart.day).garden
+                        } else {
+                            loaded
+                        }
+                    }
                     if (repository.consumeRecoveryNotice()) {
                         Toast.makeText(this@MainActivity, "Le fichier du potager était illisible : un potager neuf a été créé. L'ancien fichier est conservé dans les données de l'appli.", Toast.LENGTH_LONG).show()
                     }
@@ -251,99 +265,92 @@ class MainActivity : ComponentActivity() {
                 val diseases = DiseaseCatalog.ALL_DISEASES
                 val vegetables = VegetableCatalog.ALL_VEGETABLES
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    bottomBar = {
-                        SillonBottomNavigation(
-                            currentScreen = currentScreen,
-                            onSelectScreen = { currentScreen = it },
-                        )
-                    },
-                ) { innerPadding ->
-                    androidx.compose.foundation.layout.Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        when (currentScreen) {
-                            SillonScreen.DASHBOARD -> {
-                                val today = LocalDate.now()
-                                val plan = remember(garden, today) { DashboardPlanner.plan(garden, today) }
-                                val tip = remember(today) {
-                                    val withAdvice = vegetables.filter { it.advice.isNotBlank() }
-                                    withAdvice.getOrNull(today.dayOfYear % withAdvice.size.coerceAtLeast(1))?.let { "Conseil du jour : ${it.name}" to it.advice }
-                                }
-                                DashboardScreen(
-                                    plan = plan,
-                                    placeLabel = departmentCode?.let(FrenchFrostCatalog::getByCode)?.let { "${it.name} (${it.code})" },
-                                    tip = tip,
-                                    onNavigateToGarden = { currentScreen = SillonScreen.GARDEN },
-                                    onNavigateToCatalog = { currentScreen = SillonScreen.CATALOG },
-                                    onOpenSettings = { pickingDepartment = true },
-                                )
+                SillonScaffold(
+                    currentScreen = currentScreen,
+                    onSelectScreen = { currentScreen = it },
+                ) {
+                    when (currentScreen) {
+                        SillonScreen.DASHBOARD -> {
+                            val today = LocalDate.now()
+                            val plan = remember(garden, today, climate) { DashboardPlanner.plan(garden, today, FrostEngine(climate = climate)) }
+                            val tip = remember(today, climate) {
+                                val withAdvice = vegetables.filter { it.advice.isNotBlank() && climate in it.climates }
+                                withAdvice.getOrNull(today.dayOfYear % withAdvice.size.coerceAtLeast(1))?.let { "Conseil du jour : ${it.name}" to it.advice }
                             }
-
-                            SillonScreen.GARDEN -> GardenScreen(
-                                garden = garden,
-                                vegetables = vegetables,
-                                onUpdateSlot = { pId, r, c, vId ->
-                                    update { repository.updateSlot(pId, r, c, vId) }
-                                },
-                                onAddParcel = { name, type, r, c ->
-                                    update { repository.addParcel(name, type, r, c) }
-                                },
-                                onDeleteParcel = { pId ->
-                                    update { repository.deleteParcel(pId) }
-                                },
-                            )
-
-                            SillonScreen.CATALOG -> CatalogScreen(
-                                vegetables = vegetables,
-                            )
-
-                            SillonScreen.DOCTOR -> DoctorScreen(
-                                diseases = diseases,
-                            )
-
-                            SillonScreen.SETTINGS -> SettingsScreen(
-                                frostMonth = garden.frostDate.month,
-                                frostDay = garden.frostDate.day,
-                                onFrostDateChange = { m, d ->
-                                    // Une date réglée à la main ne correspond plus au département.
-                                    // Le jour est ramené à la longueur du mois (pas de 31 avril ni de 29 février).
-                                    val day = d.coerceAtMost(java.time.YearMonth.of(2023, m).lengthOfMonth())
-                                    update { repository.updateFrostDate(m, day) }
-                                    prefs.departmentCode = null
-                                    departmentCode = null
-                                },
-                                departmentLabel = departmentCode?.let(FrenchFrostCatalog::getByCode)?.let { "${it.name} (${it.code})" },
-                                onPickDepartment = { pickingDepartment = true },
-                                remindersOn = remindersOn,
-                                onRemindersChange = { on ->
-                                    if (on && !SowingReminders.canNotify(this@MainActivity) && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                                        notificationLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                                    } else {
-                                        setReminders(on)
-                                    }
-                                },
-                                smartViewfinderOn = smartViewfinderOn,
-                                onSmartViewfinderChange = { on ->
-                                    prefs.smartViewfinderEnabled = on
-                                    smartViewfinderOn = on
-                                },
-                                onExportJson = {
-                                    val fileName = "sillon_sauvegarde_${LocalDate.now()}.json"
-                                    exportJsonLauncher.launch(fileName)
-                                },
-                                onImportJson = {
-                                    importJsonLauncher.launch(arrayOf("application/json", "*/*"))
-                                },
-                                onExportCsv = {
-                                    val fileName = "sillon_potager_${LocalDate.now()}.csv"
-                                    exportCsvLauncher.launch(fileName)
-                                },
+                            DashboardScreen(
+                                plan = plan,
+                                placeLabel = departmentCode?.let(FrenchFrostCatalog::getByCode)?.let { "${it.name} (${it.code})" },
+                                tip = tip,
+                                onNavigateToGarden = { currentScreen = SillonScreen.GARDEN },
+                                onNavigateToCatalog = { currentScreen = SillonScreen.CATALOG },
+                                onOpenSettings = { pickingDepartment = true },
                             )
                         }
+
+                        SillonScreen.GARDEN -> GardenScreen(
+                            garden = garden,
+                            vegetables = vegetables,
+                            onUpdateSlot = { pId, r, c, vId ->
+                                update { repository.updateSlot(pId, r, c, vId) }
+                            },
+                            onAddParcel = { name, type, r, c ->
+                                update { repository.addParcel(name, type, r, c) }
+                            },
+                            onDeleteParcel = { pId ->
+                                update { repository.deleteParcel(pId) }
+                            },
+                        )
+
+                        SillonScreen.CATALOG -> CatalogScreen(
+                            vegetables = vegetables,
+                        )
+
+                        SillonScreen.DOCTOR -> DoctorScreen(
+                            diseases = diseases,
+                        )
+
+                        SillonScreen.SETTINGS -> SettingsScreen(
+                            frostMonth = garden.frostDate.month,
+                            frostDay = garden.frostDate.day,
+                            climate = climate,
+                            onFrostDateChange = { m, d ->
+                                // Une date réglée à la main ne correspond plus au département, sauf en outre-mer où
+                                // le département fixe le climat : on le garde, la date n'y est qu'une estimation.
+                                // Le jour est ramené à la longueur du mois (pas de 31 avril ni de 29 février).
+                                val day = d.coerceAtMost(java.time.YearMonth.of(2023, m).lengthOfMonth())
+                                update { repository.updateFrostDate(m, day) }
+                                if (climate == Climate.TEMPERATE) {
+                                    prefs.departmentCode = null
+                                    departmentCode = null
+                                }
+                            },
+                            departmentLabel = departmentCode?.let(FrenchFrostCatalog::getByCode)?.let { "${it.name} (${it.code})" },
+                            onPickDepartment = { pickingDepartment = true },
+                            remindersOn = remindersOn,
+                            onRemindersChange = { on ->
+                                if (on && !SowingReminders.canNotify(this@MainActivity) && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                                    notificationLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                } else {
+                                    setReminders(on)
+                                }
+                            },
+                            smartViewfinderOn = smartViewfinderOn,
+                            onSmartViewfinderChange = { on ->
+                                prefs.smartViewfinderEnabled = on
+                                smartViewfinderOn = on
+                            },
+                            onExportJson = {
+                                val fileName = "sillon_sauvegarde_${LocalDate.now()}.json"
+                                exportJsonLauncher.launch(fileName)
+                            },
+                            onImportJson = {
+                                importJsonLauncher.launch(arrayOf("application/json", "*/*"))
+                            },
+                            onExportCsv = {
+                                val fileName = "sillon_potager_${LocalDate.now()}.csv"
+                                exportCsvLauncher.launch(fileName)
+                            },
+                        )
                     }
                 }
             }
@@ -358,45 +365,5 @@ class MainActivity : ComponentActivity() {
             "juillet", "août", "septembre", "octobre", "novembre", "décembre"
         )
         return months.getOrElse(month - 1) { "" }
-    }
-}
-
-@Composable
-private fun SillonBottomNavigation(
-    currentScreen: SillonScreen,
-    onSelectScreen: (SillonScreen) -> Unit,
-) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 2.dp,
-    ) {
-        val navColors = NavigationBarItemDefaults.colors(
-            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-            selectedTextColor = MaterialTheme.colorScheme.onSurface,
-            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        SillonScreen.values().forEach { screen ->
-            NavigationBarItem(
-                selected = currentScreen == screen,
-                onClick = { onSelectScreen(screen) },
-                icon = {
-                    Icon(
-                        imageVector = screen.icon,
-                        contentDescription = screen.title,
-                    )
-                },
-                label = {
-                    Text(
-                        text = screen.title,
-                        style = MaterialTheme.typography.labelSmall,
-                    )
-                },
-                alwaysShowLabel = true,
-                colors = navColors,
-            )
-        }
     }
 }

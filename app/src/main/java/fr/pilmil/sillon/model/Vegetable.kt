@@ -10,6 +10,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlin.math.max
 
 @Serializable
 enum class WaterNeed(val frenchLabel: String) {
@@ -80,7 +81,14 @@ data class Vegetable(
     val goodCompanions: List<CompanionRelation> = emptyList(),
     val badCompanions: List<CompanionRelation> = emptyList(),
     val advice: String,
+    /** Climats où la plante a un calendrier. Pour une plante TROPICAL, les semaines sont relatives au début de saison du territoire. */
+    val climates: Set<Climate> = setOf(Climate.TEMPERATE),
+    /** Vrai quand des valeurs secondaires (levée, températures, durée de récolte) reposent sur peu de sources publiques. */
+    val indicative: Boolean = false,
 ) {
+    /** Grande culture : l'espacement dépasse le mètre, donc plus qu'un carré de 30 cm. */
+    val needsMoreSpace: Boolean get() = max(spacingInRowCm, spacingBetweenRowsCm) >= 100
+
     val daysToEmergeMin: Int get() = daysToEmerge.first
     val daysToEmergeMax: Int get() = daysToEmerge.last
     val daysToHarvestMin: Int get() = daysToHarvest.first

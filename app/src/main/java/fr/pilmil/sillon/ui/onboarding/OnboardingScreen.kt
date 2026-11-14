@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.pilmil.sillon.data.DepartmentFrost
 import fr.pilmil.sillon.data.FrenchFrostCatalog
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.ui.components.SillonButton
 import fr.pilmil.sillon.ui.components.SillonOutlinedButton
 import java.text.Normalizer
@@ -76,7 +77,7 @@ fun OnboardingScreen(
             0 -> {
                 Title("Où se trouve votre potager ?")
                 Text(
-                    "Sillon cale tous les semis sur la date moyenne des dernières gelées de votre département. Rien ne quitte votre téléphone.",
+                    "Sillon cale tous les semis sur la date moyenne des dernières gelées de votre département ou territoire (en outre-mer, sur le début de la saison de plantation). Rien ne quitte votre téléphone.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -158,7 +159,7 @@ fun DepartmentSearch(
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
-            label = { Text("Département (numéro ou nom)") },
+            label = { Text("Territoire ou département (numéro ou nom)") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -175,7 +176,8 @@ fun DepartmentSearch(
                     Column(Modifier.weight(1f)) {
                         Text(dep.name, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
                         Text(
-                            "Dernières gelées vers le ${dayMonth.format(dep.medianLastFrost.toLocalDate(2026))}",
+                            if (dep.climate == Climate.TROPICAL) "Saison de plantation estimée vers le ${dayMonth.format(dep.seasonStart.toLocalDate(2026))}"
+                            else "Dernières gelées vers le ${dayMonth.format(dep.medianLastFrost.toLocalDate(2026))}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -195,7 +197,7 @@ fun DepartmentSearch(
 fun DepartmentDialog(selectedCode: String?, onPick: (DepartmentFrost) -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Mon département") },
+        title = { Text("Mon territoire ou département") },
         text = { DepartmentSearch(onPick = onPick, selectedCode = selectedCode, modifier = Modifier.heightIn(max = 420.dp)) },
         confirmButton = {},
         dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler") } },

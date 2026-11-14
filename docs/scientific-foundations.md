@@ -162,6 +162,51 @@ J_gel - 8 sem.                          J_gel                         J_gel + 3 
      *(ex. $+1$ semaine pour les tomates en zone tempérée, $+2$ semaines pour les cucurbitacées frileuses).*
 3. **Précision territoriale locale :** Sillon intègre dans `FrenchFrostCatalog` les dates médianes validées pour les **101 départements métropolitains et d'outre-mer**, ajustables manuellement au jour près par l'utilisateur pour tenir compte des microclimats de versant, d'ubac ou d'îlots de chaleur urbains.
 
+### 3.4. Cultures tropicales et saisons (outre-mer)
+
+Il n'y a pas de gelée en Guadeloupe, Martinique, Guyane, à La Réunion, à Mayotte, à Saint-Martin, à Saint-Barthélemy ni en Polynésie française : l'ancrage de la section 3.3 n'y a pas de sens. Pour les huit territoires (climat `TROPICAL`), Sillon garde le même mécanisme, mais l'ancre devient le **début de la saison de plantation** du territoire, et les semaines des cultures tropicales (`*WeeksAfterFrost`, négatives permises) sont relatives à cette ancre. Seules les cultures tropicales produisent des tâches de calendrier dans ces territoires ; les cultures tempérées restent plantables dans les parcelles, sans tâches. En métropole, les cultures tropicales n'apparaissent pas au calendrier.
+
+**Ce qui est sourcé.** Les saisons (carême, hivernage, grande saison des pluies, kashkazi, etc.) viennent de Météo-France, *Les climats en outre-mer* : <https://meteofrance.com/comprendre-climat/france/les-climats-en-outre-mer>, complétée pour la Martinique par la présentation Météo-France au Rectorat (2016) : <https://site.ac-martinique.fr/wp-content/uploads/sites/12/2016/10/Elements-M%c3%a9t%c3%a9o_Rectorat_oct2016_V2.pdf> et pour Mayotte par Tropilég : <https://ephytia.inrae.fr/en/C/22978/Tropileg-Mayotte> et l'IEDOM (rapport 2020) : <https://www.iedom.fr/IMG/rapport_annuel_iedom_mayotte_2020/index-78.html>.
+
+**Ce qui est estimé.** Aucune source ne fixe une date « officielle » : les dates de saison varient de 1 à 2 mois selon les sources, l'année, la côte et l'altitude. Les ancres de Sillon sont des **conventions de conception**, modifiables au jour près par l'utilisateur :
+
+| Territoire | Ancre (début de saison) | Raison |
+|---|---|---|
+| 971 Guadeloupe, 972 Martinique | 1er juin | début de l'hivernage et de la saison cyclonique |
+| 973 Guyane | 15 août | entrée en grande saison sèche (aucune fiche locale trouvée) |
+| 974 La Réunion | 1er novembre | début de la saison chaude (altitude non modélisée : seuils non établis) |
+| 976 Mayotte | 1er avril | fin des pluies, début du maraîchage |
+| 977 Saint-Martin, 978 Saint-Barthélemy | 1er juin | début de l'hivernage, aligné sur 971/972 (Météo-France : hivernage juin-novembre ; l'IEDOM le place en juillet-octobre pour Saint-Martin, soit 1 à 2 mois de décalage) |
+| 987 Polynésie française | 1er novembre | début de la saison des pluies : plantation du taro « toute l'année, mais le moment le plus opportun est la fin octobre » (DAG, note 2004 lue par OCR), bananier à planter de novembre à mars (DAG, 2016). Variation de 1 à 2 mois selon les îles |
+
+Les semaines de chaque culture sont calées sur les données des Antilles (971/972) ; dans les trois autres territoires, elles sont une approximation de la même ancre, qui ne représente pas les écarts de saison propres à chaque espèce d'un territoire à l'autre (par exemple, le papayer se plante au début des pluies, soit novembre-décembre à Mayotte, alors que l'ancre y est au 1er avril).
+
+**Collectivités ajoutées (nov. 2026).** Sources : Météo-France, *Les climats en outre-mer* (saisons de la Polynésie, de Saint-Martin et Saint-Barthélemy) ; Direction de l'agriculture de Polynésie française (DAG) : fiche taro <https://www.service-public.pf/dag/wp-content/uploads/sites/28/2018/12/taro-nt-culturePF_dagSDRcgarnier_2004.pdf>, fiche bananier <https://www.service-public.pf/dag/wp-content/uploads/sites/28/2018/12/banane-dessert-plantain_ft-culture-polynesieFrancaise_sdr_2016.pdf>, fiche pomme de terre (Australes, plantation d'avril à août) <https://www.service-public.pf/dag/wp-content/uploads/sites/28/2018/12/pommedeterre-ft-culture_SDRdag_v181212.pdf> ; IEDOM, rapport annuel Saint-Martin 2020 : <https://www.iedom.fr/IMG/rapport_annuel_iedom_st-martin_2020/index-20.html>. Les trois ancres sont des **estimations** (aucune source ne donne de date d'ancrage) ; les saisons de la Polynésie varient selon l'archipel et l'île haute ou l'atoll (non modélisés). Les cultures du pack s'y appliquent avec la même ancre : le taro (plantation une semaine après l'ancre) est cohérent avec l'optimum DAG de fin octobre ; l'igname (huit semaines avant l'ancre) et la patate douce (quatre semaines après) n'y sont pas sourcées localement.
+
+**Territoires volontairement non couverts** (faute de donnée fiable, pour ne pas afficher de date inventée) :
+
+| Territoire | Donnée qui manque pour l'ajouter |
+|---|---|
+| 975 Saint-Pierre-et-Miquelon (seul territoire à vrai gel, climat océanique froid) | normales de température de la station de Pointe-Blanche (Météo-France), pour calculer la date médiane de dernière gelée ; une fin mai-début juin se déduit des Tmin moyennes (0 °C en avril, 3 °C en mai) mais n'est pas sourcée |
+| 988 Nouvelle-Calédonie | calendrier de plantation local (Chambre d'agriculture, province Sud, IAC) et températures hivernales en altitude pour trancher le gel |
+| 986 Wallis-et-Futuna | calendrier de plantation local (service de l'agriculture de Wallis, CPS/PROTEGE) ; l'existence d'une saison sèche est contestée selon les sources |
+
+**Cultures retenues et sources.** Seules les espèces dont le cycle, l'espacement et la période d'implantation sont au moins moyennement documentés sont au catalogue. Les valeurs secondaires (températures de germination, durée de levée, durée de récolte) sont souvent sans source publique pour le jardin familial : ces plantes portent le drapeau `indicative` et l'application le signale (« Valeurs indicatives : peu de sources publiques pour le jardin familial »).
+
+| Culture | Source principale | Confiance (cycle, espacement, période) |
+|---|---|---|
+| Igname (*Dioscorea alata*) | Fiche itinéraire technique Igname, Chambre d'agriculture de la Martinique (2014) : <https://web.archive.org/web/2023/https://martinique.chambre-agriculture.fr/fileadmin/user_upload/National/FAL_commun/publications/Outre-Mer/FIT_Igname_2014.pdf> ; bilan BSV971 : <https://daaf.guadeloupe.agriculture.gouv.fr/IMG/pdf/BSV971_CulturesVivrieres-Bilan2018_cle81e161.pdf> | élevée |
+| Papayer (*Carica papaya*) | Itinéraire technique papaye, PIP/COLEACP : <https://eservices.colead.link/fr/system/files/file_fields/2016/02/19/it-papaye-07-2011-08-1-fr-0.pdf> | élevée |
+| Pois d'angole (*Cajanus cajan*) | ECHO : <https://www.echocommunity.org/fr/resources/81d5fd86-74e7-41c9-af1e-a8da7a265bd2.pdf> ; guide du jardinage au naturel, TCO (La Réunion) : <https://www.tco.re/wp-content/uploads/2014/07/Guide-du-jardinage-au-naturel.pdf> | élevée |
+| Patate douce (*Ipomoea batatas*) | FIT Patate douce, Chambre d'agriculture de la Martinique (2014, lue par extrait) ; BSV971 ci-dessus ; FAO : <https://www.fao.org/4/x3996e/x3996e39.htm> | moyenne (période : « toute l'année » en Réunion et Guadeloupe) |
+| Madère / dachine (*Colocasia esculenta*) | FIT Dachine, Chambre d'agriculture de la Martinique (2014, par extrait) ; USDA plant guide : <https://webarchive.library.unt.edu/web/20090304235425/http://plants.usda.gov/plantguide/doc/cs_coes.doc> | moyenne |
+
+Les associations bénéfiques viennent du *Guide tropical* CIRAD/RITA (2015), fiche technique 17 « rotation et association » : <https://cosaq.cirad.fr/content/download/4228/31689/version/1/file/Guide+tropical_fiches-techniques.pdf> (maïs x patate douce x haricot ; igname x concombre, haricot, maïs, dachine), du guide TCO (ambrevade x maïs) et de la Chambre d'agriculture de la Martinique (dachine x tomate x oignon) : <https://martinique.chambre-agriculture.fr/fileadmin/user_upload/National/FAL_commun/publications/Martinique/Association_cultures.pdf>. Le « haricot » de ces sources n'est pas précisé : Sillon le rattache au haricot nain. **Aucun antagonisme n'est documenté** pour ces cultures : aucun n'est inscrit.
+
+**Familles botaniques ajoutées.** Convolvulacées, Dioscoréacées, Aracées, Caricacées. L'exigence nutritive suit le *Guide tropical* (FT17) et la fiche Igname (apports élevés) ; la pause de 3 ans des Dioscoréacées (« ne pas se succéder ») est sourcée, celles des trois autres (2 ans) sont une **convention** de conception.
+
+**Écartées faute de données suffisantes** (nov. 2026, à reprendre quand des sources existeront) : bananier (la DAG donne cycle d'un an, environ 2 500 pieds par hectare et plantation de novembre à mars, mais pour la Polynésie seule : le catalogue ne distingue pas les saisons par territoire, la plantation de novembre serait affichée en juin aux Antilles sans source), uru ou arbre à pain (verger de 10 x 10 m, période de plantation non établie), christophine, chou caraïbe (espacement non établi), manioc, ananas, gombo, gingembre (période d'implantation non sourcée dans les DOM), curcuma, citronnelle, giraumon, amarante et morelle, brède mafane, pak-choï, ciboule.
+
 ---
 
 ## 4. Rotation des Cultures et Écologie des Sols

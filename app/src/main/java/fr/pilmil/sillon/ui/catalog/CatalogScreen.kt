@@ -56,28 +56,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.pilmil.sillon.model.BotanicalFamily
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.model.Vegetable
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.theme.SillonPalette
+
+/** Mention commune au catalogue et à la feuille de choix : la valeur n'est pas fausse, elle est peu sourcée. */
+const val INDICATIVE_NOTICE = "Valeurs indicatives : peu de sources publiques pour le jardin familial."
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(
     vegetables: List<Vegetable>,
     onSelectVegetable: (Vegetable) -> Unit = {},
+    // Fiche dépliée dès l'ouverture ; sert surtout aux captures d'écran.
+    initiallyExpandedId: String? = null,
+    initiallyTropicalOnly: Boolean = false,
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var selectedFamily by remember { mutableStateOf<BotanicalFamily?>(null) }
-    var expandedVegetableId by remember { mutableStateOf<String?>(null) }
+    var tropicalOnly by remember { mutableStateOf(initiallyTropicalOnly) }
+    var expandedVegetableId by remember { mutableStateOf(initiallyExpandedId) }
 
-    val filteredVegetables = remember(vegetables, searchQuery, selectedFamily) {
+    val filteredVegetables = remember(vegetables, searchQuery, selectedFamily, tropicalOnly) {
         vegetables.filter { plant ->
             val matchesQuery = searchQuery.isBlank() ||
                     plant.name.contains(searchQuery, ignoreCase = true) ||
                     plant.latinName.contains(searchQuery, ignoreCase = true)
             val matchesFamily = selectedFamily == null || plant.family == selectedFamily
-            matchesQuery && matchesFamily
+            matchesQuery && matchesFamily && (!tropicalOnly || Climate.TROPICAL in plant.climates)
         }
     }
 
@@ -169,25 +177,11 @@ fun CatalogScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(horizontal = 2.dp),
             ) {
+                item {
+                    FilterPill("Cultures tropicales", tropicalOnly) { tropicalOnly = !tropicalOnly }
+                }
                 items(families) { (family, label) ->
-                    val isSelected = selectedFamily == family
-                    Surface(
-                        modifier = Modifier.clickable { selectedFamily = family },
-                        shape = RoundedCornerShape(10.dp),
-                        color = if (isSelected) SillonPalette.Sage else MaterialTheme.colorScheme.surface,
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            if (isSelected) SillonPalette.Sage else MaterialTheme.colorScheme.outline,
-                        ),
-                    ) {
-                        Text(
-                            text = label,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                        )
-                    }
+                    FilterPill(label, selectedFamily == family) { selectedFamily = family }
                 }
             }
         }
@@ -203,6 +197,27 @@ fun CatalogScreen(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun FilterPill(label: String, isSelected: Boolean, onClick: () -> Unit) {
+    Surface(
+        modifier = Modifier.clickable { onClick() },
+        shape = RoundedCornerShape(10.dp),
+        color = if (isSelected) SillonPalette.Sage else MaterialTheme.colorScheme.surface,
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            if (isSelected) SillonPalette.Sage else MaterialTheme.colorScheme.outline,
+        ),
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+        )
     }
 }
 
@@ -262,9 +277,9 @@ private fun VegetableCard(
             Spacer(modifier = Modifier.height(10.dp))
 
             // Ligne résumée : Famille + Température + Besoins
-            Row(
+            FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 SillonBadge(
                     text = vegetable.family.frenchLabel,
@@ -283,11 +298,36 @@ private fun VegetableCard(
                     textColor = SillonPalette.SynergyBlue,
                     icon = Icons.Filled.WaterDrop,
                 )
+                if (Climate.TEMPERATE !in vegetable.climates) {
+                    SillonBadge(
+                        text = Climate.TROPICAL.frenchLabel,
+                        containerColor = SillonPalette.AlertContainer,
+                        textColor = SillonPalette.AlertAmber,
+                    )
+                }
             }
 
             // Détails dépliés
             AnimatedVisibility(visible = isExpanded) {
                 Column(modifier = Modifier.padding(top = 14.dp)) {
+                    if (vegetable.needsMoreSpace) {
+                        Text(
+                            text = "Demande plus d'espace qu'un carré de 30 cm.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = SillonPalette.AlertAmber,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    if (vegetable.indicative) {
+                        Text(
+                            text = INDICATIVE_NOTICE,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontStyle = FontStyle.Italic,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                     // Conseil agronomique
                     Text(
                         text = "Conseil de culture :",

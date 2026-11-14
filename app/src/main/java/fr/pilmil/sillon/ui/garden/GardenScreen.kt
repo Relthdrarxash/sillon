@@ -51,6 +51,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,10 +62,12 @@ import fr.pilmil.sillon.model.Parcel
 import fr.pilmil.sillon.model.ParcelSlot
 import fr.pilmil.sillon.model.ParcelType
 import fr.pilmil.sillon.model.Vegetable
+import fr.pilmil.sillon.ui.catalog.INDICATIVE_NOTICE
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonButton
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.theme.SillonPalette
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,9 +77,17 @@ fun GardenScreen(
     onUpdateSlot: (parcelId: String, row: Int, col: Int, vegetableId: String?) -> Unit,
     onAddParcel: (name: String, type: ParcelType, rows: Int, cols: Int) -> Unit,
     onDeleteParcel: (parcelId: String) -> Unit,
+    today: LocalDate = LocalDate.now(),
+    // Case mise en évidence dès l'ouverture (sans feuille de choix) ; sert surtout aux captures d'écran.
+    initialSelectedCell: Pair<Int, Int>? = null,
+    initialPerspective: Boolean = true,
 ) {
     var selectedParcelIndex by remember { mutableStateOf(0) }
     var selectedSlotCoord by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+    // La case reste mise en évidence après la fermeture de la feuille : on voit ce qu'on vient de modifier.
+    var highlightedCell by remember { mutableStateOf(initialSelectedCell) }
+    var perspectiveView by remember { mutableStateOf(initialPerspective) }
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     var showAddParcelDialog by remember { mutableStateOf(false) }
 
     val activeParcel = garden.parcels.getOrNull(selectedParcelIndex) ?: garden.parcels.firstOrNull()
@@ -88,21 +100,22 @@ fun GardenScreen(
         contentPadding = PaddingValues(top = 20.dp, bottom = 100.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // En-tête
+        // En-tête compact et choix de la vue
         item {
-            Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
                 Text(
-                    text = "Plan vivant du potager",
-                    style = MaterialTheme.typography.displaySmall,
+                    text = "Mon potager",
+                    style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold,
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Carrés potagers & planches maraîchères avec contrôle d'affinités.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    ViewChip("Perspective", perspectiveView) { perspectiveView = true }
+                    ViewChip("À plat", !perspectiveView) { perspectiveView = false }
+                }
             }
         }
 
@@ -121,7 +134,10 @@ fun GardenScreen(
                         val parcel = garden.parcels[index]
                         val isSelected = index == selectedParcelIndex
                         Surface(
-                            modifier = Modifier.clickable { selectedParcelIndex = index },
+                            modifier = Modifier.clickable {
+                                selectedParcelIndex = index
+                                highlightedCell = null
+                            },
                             shape = RoundedCornerShape(12.dp),
                             color = if (isSelected) SillonPalette.Sage else MaterialTheme.colorScheme.surface,
                             border = BorderStroke(
@@ -156,14 +172,37 @@ fun GardenScreen(
             }
         }
 
-        // Grille interactive de la parcelle active
+        // Scène en perspective ou grille à plat de la parcelle active
         if (activeParcel != null) {
             item {
-                ParcelGridView(
-                    parcel = activeParcel,
-                    vegetables = vegetables,
-                    onSlotClick = { r, c -> selectedSlotCoord = Pair(r, c) },
-                )
+                if (perspectiveView) {
+                    GardenScene(
+                        parcels = garden.parcels,
+                        selectedIndex = garden.parcels.indexOf(activeParcel),
+                        vegetables = vegetables,
+                        today = today,
+                        selectedCell = highlightedCell,
+                        onSelectParcel = {
+                            selectedParcelIndex = it
+                            highlightedCell = null
+                        },
+                        onCellClick = { r, c ->
+                            highlightedCell = Pair(r, c)
+                            selectedSlotCoord = Pair(r, c)
+                        },
+                        isDark = isDark,
+                        modifier = Modifier.clip(RoundedCornerShape(20.dp)),
+                    )
+                } else {
+                    ParcelGridView(
+                        parcel = activeParcel,
+                        vegetables = vegetables,
+                        onSlotClick = { r, c ->
+                            highlightedCell = Pair(r, c)
+                            selectedSlotCoord = Pair(r, c)
+                        },
+                    )
+                }
             }
 
             // Légende des alertes & synergies
@@ -203,6 +242,8 @@ fun GardenScreen(
                     }
                 }
             }
+
+            item { NeighborhoodCard(activeParcel, vegetables) }
         } else {
             item {
                 Text(
@@ -302,6 +343,21 @@ fun GardenScreen(
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
+                                    if (veg.needsMoreSpace) {
+                                        Text(
+                                            text = "Demande plus d'espace qu'un carré de 30 cm.",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = SillonPalette.AlertAmber,
+                                        )
+                                    }
+                                    if (veg.indicative) {
+                                        Text(
+                                            text = INDICATIVE_NOTICE,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontStyle = FontStyle.Italic,
+                                        )
+                                    }
                                 }
                                 if (currentSlot?.vegetableId == veg.id) {
                                     Icon(
@@ -409,6 +465,7 @@ private fun ParcelGridView(
     vegetables: List<Vegetable>,
     onSlotClick: (row: Int, col: Int) -> Unit,
 ) {
+    val neighborhood = remember(parcel, vegetables) { neighborhoodOf(parcel, vegetables) }
     SillonCard(
         backgroundColor = MaterialTheme.colorScheme.surface,
         borderColor = MaterialTheme.colorScheme.outline,
@@ -425,20 +482,9 @@ private fun ParcelGridView(
                     for (c in 0 until parcel.cols) {
                         val slot = parcel.getSlot(r, c)
                         val veg = vegetables.find { it.id == slot?.vegetableId }
-
-                        // Calcul simple des synergies / alertes avec voisins directs
-                        val neighborVegs = listOfNotNull(
-                            parcel.getSlot(r - 1, c)?.vegetableId?.let { id -> vegetables.find { it.id == id } },
-                            parcel.getSlot(r + 1, c)?.vegetableId?.let { id -> vegetables.find { it.id == id } },
-                            parcel.getSlot(r, c - 1)?.vegetableId?.let { id -> vegetables.find { it.id == id } },
-                            parcel.getSlot(r, c + 1)?.vegetableId?.let { id -> vegetables.find { it.id == id } },
-                        )
-                        val hasGoodCompanion = veg != null && neighborVegs.any { neighbor ->
-                            veg.goodCompanions.any { it.targetPlantId == neighbor.id }
-                        }
-                        val hasBadCompanion = veg != null && neighborVegs.any { neighbor ->
-                            veg.badCompanions.any { it.targetPlantId == neighbor.id }
-                        }
+                        val neighbors = neighborhood[r to c]
+                        val hasGoodCompanion = neighbors?.hasGood == true
+                        val hasBadCompanion = neighbors?.hasBad == true
 
                         SlotCell(
                             vegetable = veg,
@@ -529,6 +575,78 @@ private fun SlotCell(
                     contentDescription = "Ajouter",
                     tint = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.size(18.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ViewChip(label: String, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        modifier = Modifier.clickable(onClick = onClick),
+        shape = RoundedCornerShape(50),
+        color = if (selected) SillonPalette.SageContainer else MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, if (selected) SillonPalette.Sage else MaterialTheme.colorScheme.outline),
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = if (selected) SillonPalette.SageDark else MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
+        )
+    }
+}
+
+/** Les affinités et alertes réellement détectées dans la parcelle, en phrases courtes. */
+@Composable
+private fun NeighborhoodCard(parcel: Parcel, vegetables: List<Vegetable>) {
+    val links = remember(parcel, vegetables) { neighborLinks(parcel, vegetables) }
+    SillonCard(
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        borderColor = MaterialTheme.colorScheme.outline,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = "Voisinage",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            if (links.isEmpty()) {
+                Text(
+                    text = "Aucune affinité ni alerte entre les plantes de ce carré pour l'instant.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            for (link in links.take(6)) {
+                val second = link.second.name.replaceFirstChar { it.lowercase() }
+                val sentence = when {
+                    link.positive && link.protects -> "${link.first.name} et $second se protègent mutuellement"
+                    link.positive -> "${link.first.name} et $second s'entraident"
+                    else -> "${link.first.name} et $second se gênent : à éloigner"
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(if (link.positive) SillonPalette.Sage else SillonPalette.AlertAmber),
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = sentence,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
+            if (links.size > 6) {
+                Text(
+                    text = "et ${links.size - 6} autres",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

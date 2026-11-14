@@ -10,3 +10,6 @@ distribution/
 *.keystore
 *.jks
 !app/sillon-debug.keystore
+
+# Images intermédiaires de Paparazzi (les captures publiées sont dans docs/captures/)
+app/src/test/snapshots/

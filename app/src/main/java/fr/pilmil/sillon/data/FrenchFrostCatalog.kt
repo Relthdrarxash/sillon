@@ -1,13 +1,22 @@
 package fr.pilmil.sillon.data
 
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.model.FrostDate
 
+/**
+ * Ancre du calendrier d'un département ou d'une collectivité d'outre-mer : [medianLastFrost] en climat tempéré (dernière gelée), et en climat
+ * tropical le début de la saison de plantation du territoire, estimé (voir [seasonStart]).
+ */
 data class DepartmentFrost(
     val code: String,
     val name: String,
     val medianLastFrost: FrostDate,
     val region: String,
-)
+    val climate: Climate = Climate.TEMPERATE,
+) {
+    /** Même valeur que [medianLastFrost], nommée pour ce qu'elle est en outre-mer : il n'y a pas de gel à cet endroit. */
+    val seasonStart: FrostDate get() = medianLastFrost
+}
 
 object FrenchFrostCatalog {
 
@@ -108,12 +117,19 @@ object FrenchFrostCatalog {
         DepartmentFrost("93", "Seine-Saint-Denis", FrostDate(4, 15), "Île-de-France"),
         DepartmentFrost("94", "Val-de-Marne", FrostDate(4, 15), "Île-de-France"),
         DepartmentFrost("95", "Val-d'Oise", FrostDate(4, 20), "Île-de-France"),
-        // DOM-TOM
-        DepartmentFrost("971", "Guadeloupe", FrostDate(1, 1), "Guadeloupe"),
-        DepartmentFrost("972", "Martinique", FrostDate(1, 1), "Martinique"),
-        DepartmentFrost("973", "Guyane", FrostDate(1, 1), "Guyane"),
-        DepartmentFrost("974", "La Réunion", FrostDate(1, 1), "La Réunion"),
-        DepartmentFrost("976", "Mayotte", FrostDate(1, 1), "Mayotte"),
+        // DOM : pas de gelée. La date est le début de la saison de plantation, une convention de conception
+        // (les sources varient de 1 à 2 mois, voir docs/scientific-foundations.md) que l'utilisateur peut corriger.
+        DepartmentFrost("971", "Guadeloupe", FrostDate(6, 1), "Guadeloupe", Climate.TROPICAL), // début de l'hivernage
+        DepartmentFrost("972", "Martinique", FrostDate(6, 1), "Martinique", Climate.TROPICAL), // début de l'hivernage
+        DepartmentFrost("973", "Guyane", FrostDate(8, 15), "Guyane", Climate.TROPICAL), // entrée en grande saison sèche
+        DepartmentFrost("974", "La Réunion", FrostDate(11, 1), "La Réunion", Climate.TROPICAL), // début de la saison chaude
+        DepartmentFrost("976", "Mayotte", FrostDate(4, 1), "Mayotte", Climate.TROPICAL), // fin des pluies, début du maraîchage
+        // Collectivités d'outre-mer : mêmes estimations modifiables (sources : docs/scientific-foundations.md, section 3.4).
+        // Non couverts faute de normales sourcées : Saint-Pierre-et-Miquelon (975, date médiane de dernière gelée
+        // introuvable), Nouvelle-Calédonie (988) et Wallis-et-Futuna (986) (aucun calendrier de plantation local).
+        DepartmentFrost("977", "Saint-Martin", FrostDate(6, 1), "Saint-Martin", Climate.TROPICAL), // début de l'hivernage (Météo-France)
+        DepartmentFrost("978", "Saint-Barthélemy", FrostDate(6, 1), "Saint-Barthélemy", Climate.TROPICAL), // idem, aligné sur les Antilles
+        DepartmentFrost("987", "Polynésie française", FrostDate(11, 1), "Polynésie française", Climate.TROPICAL), // début des pluies : taro fin octobre, banane dès novembre (DAG)
     )
 
     private val departmentMap: Map<String, DepartmentFrost> by lazy {
@@ -126,6 +142,8 @@ object FrenchFrostCatalog {
         val normalized = code.trim().uppercase().padStart(2, '0')
         return departmentMap[normalized] ?: departmentMap[code.trim().uppercase()]
     }
+
+    fun getClimate(code: String?): Climate = code?.let(::getByCode)?.climate ?: Climate.TEMPERATE
 
     fun getFrostDate(code: String): FrostDate {
         return getByCode(code)?.medianLastFrost ?: DEFAULT_FROST_DATE

@@ -1,11 +1,12 @@
 package fr.pilmil.sillon.engine
 
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.model.FrostDate
 import fr.pilmil.sillon.model.Garden
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-/** Où en est-on par rapport à la date repère des dernières gelées. */
+/** Où en est-on par rapport à la date repère : dernières gelées, ou début de saison de plantation en outre-mer. */
 sealed interface FrostStatus {
     /** La prochaine date repère est dans [days] jours. */
     data class Upcoming(val date: LocalDate, val days: Long) : FrostStatus
@@ -27,6 +28,8 @@ data class DashboardPlan(
     val gardenHarvest: List<HarvestTask>,
     /** Rempli seulement quand rien n'est à faire cette quinzaine : date des prochains travaux. */
     val nextWorkFrom: LocalDate?,
+    /** Climat du calendrier : en TROPICAL, seules les cultures tropicales ont des tâches, et la date repère n'est pas une gelée. */
+    val climate: Climate = Climate.TEMPERATE,
 ) {
     val isEmpty: Boolean
         get() = sowIndoors.isEmpty() && sowOutdoors.isEmpty() && transplant.isEmpty() && harvest.isEmpty() && gardenHarvest.isEmpty()
@@ -71,6 +74,7 @@ object DashboardPlanner {
             harvest = harvest,
             gardenHarvest = gardenHarvest,
             nextWorkFrom = if (nothing) nextWorkDate(frost, today, engine) else null,
+            climate = engine.climate,
         )
     }
 

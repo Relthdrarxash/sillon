@@ -1,6 +1,7 @@
 package fr.pilmil.sillon.data
 
 import android.content.Context
+import fr.pilmil.sillon.model.Climate
 
 /** Petits réglages hors du fichier du potager : premier lancement, département choisi, rappels. */
 class SillonPrefs(context: Context) {
@@ -27,6 +28,10 @@ class SillonPrefs(context: Context) {
 
     val department: DepartmentFrost?
         get() = departmentCode?.let(FrenchFrostCatalog::getByCode)
+
+    /** Climat du jardin, déduit du département ; tempéré tant qu'aucun département n'est choisi. */
+    val climate: Climate
+        get() = department?.climate ?: Climate.TEMPERATE
 
     private companion object {
         const val KEY_ONBOARDED = "onboarded"

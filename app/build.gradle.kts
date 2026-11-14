@@ -3,11 +3,14 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
+    // Captures d'écran sans émulateur (./tools/screenshots.sh) ; sans effet sur l'APK.
+    id("app.cash.paparazzi")
 }
 
 android {
     namespace = "fr.pilmil.sillon"
-    compileSdk = 36
+    // 35 et non 36 : Paparazzi 1.3.5 ne sait pas lire les propriétés Build de la plateforme 36 (targetSdk reste 36).
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "fr.pilmil.sillon"
@@ -107,4 +110,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     testImplementation("junit:junit:4.13.2")
+}
+
+// Trace complète en cas d'échec d'une capture, lisible directement dans le journal.
+tasks.withType<Test>().configureEach {
+    testLogging {
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        events("failed")
+    }
 }

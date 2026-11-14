@@ -32,7 +32,15 @@ enum class BotanicalFamily(
     MALVACEAE("Malvacées", NutrientRequirement.MEDIUM, 3),
     POLYGONACEAE("Polygonacées", NutrientRequirement.MEDIUM, 3),
     ROSACEAE("Rosacées", NutrientRequirement.MEDIUM, 3),
-    ASPARAGACEAE("Asparagacées", NutrientRequirement.LIGHT, 5);
+    ASPARAGACEAE("Asparagacées", NutrientRequirement.LIGHT, 5),
+
+    // Familles tropicales (pack outre-mer). Exigences : Guide tropical CIRAD/RITA FT17, FIT Igname (Chambre
+    // d'agriculture Martinique 2014), fiche papaye PIP/COLEACP. Pauses : sourcée pour les Dioscoréacées
+    // (« ne pas se succéder », 3 ans), par convention pour les autres.
+    CONVOLVULACEAE("Convolvulacées", NutrientRequirement.MEDIUM, 2),
+    DIOSCOREACEAE("Dioscoréacées", NutrientRequirement.HEAVY, 3),
+    ARACEAE("Aracées", NutrientRequirement.HEAVY, 2),
+    CARICACEAE("Caricacées", NutrientRequirement.HEAVY, 2);
 
     val label: String get() = frenchName
     val frenchLabel: String get() = frenchName

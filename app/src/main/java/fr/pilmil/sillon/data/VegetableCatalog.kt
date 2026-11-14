@@ -1,6 +1,7 @@
 package fr.pilmil.sillon.data
 
 import fr.pilmil.sillon.model.BotanicalFamily
+import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.model.CompanionBenefitType
 import fr.pilmil.sillon.model.CompanionRelation
 import fr.pilmil.sillon.model.CompanionRiskType
@@ -1861,6 +1862,142 @@ object VegetableCatalog {
         advice = "Toujours semer en bloc carré (minimum 3x3 plants) plutôt qu'en une seule longue ligne pour assurer une bonne pollinisation par le vent.",
     )
 
+    // ---------------------------------------------------------
+    // 12. CULTURES TROPICALES (outre-mer) : semaines relatives au début de saison du territoire
+    // ---------------------------------------------------------
+    // Sources et niveaux de confiance : docs/scientific-foundations.md, section « Cultures tropicales et saisons ».
+    // Les dates sont calées sur les Antilles (971/972) ; ailleurs elles sont une approximation de la même ancre.
+    // `indicative` : levée, températures et durée de récolte reposent sur peu de sources publiques.
+
+    val PATATE_DOUCE = Vegetable(
+        id = "patate_douce",
+        name = "Patate douce",
+        latinName = "Ipomoea batatas",
+        family = BotanicalFamily.CONVOLVULACEAE,
+        squareFootDensity = 1,
+        spacingInRowCm = 25,
+        spacingBetweenRowsCm = 140,
+        tempGerminationMin = 15,
+        tempOptimalMin = 22,
+        tempOptimalMax = 30,
+        daysToEmerge = 7..14,
+        daysToHarvest = 90..120,
+        transplantWeeksAfterFrost = 4,
+        harvestDurationWeeks = 3,
+        waterNeed = WaterNeed.MEDIUM,
+        sunExposure = SunExposure.FULL_SUN,
+        goodCompanions = listOf(
+            CompanionRelation("mais_doux", "Association maïs x patate douce x haricot pratiquée en Guadeloupe (Guide tropical CIRAD/RITA, FT17)", CompanionBenefitType.GENERAL_SYNERGY),
+            CompanionRelation("haricot_nain", "Association maïs x patate douce x haricot pratiquée en Guadeloupe (Guide tropical CIRAD/RITA, FT17)", CompanionBenefitType.GENERAL_SYNERGY),
+        ),
+        advice = "Se multiplie par boutures de tige de 25 à 35 cm prises sur des pieds sains de 2 à 3 mois, enterrées en oblique sur 2 à 3 nœuds, sur butte ; arroser à la reprise par temps sec. Tiges rampantes : à tailler pour rester dans la case. Ne pas replanter sur la même famille (Convolvulacées).",
+        climates = setOf(Climate.TROPICAL),
+        indicative = true,
+    )
+
+    val IGNAME = Vegetable(
+        id = "igname",
+        name = "Igname",
+        latinName = "Dioscorea alata",
+        family = BotanicalFamily.DIOSCOREACEAE,
+        squareFootDensity = 1,
+        spacingInRowCm = 30,
+        spacingBetweenRowsCm = 140,
+        tempGerminationMin = 20,
+        tempOptimalMin = 25,
+        tempOptimalMax = 30,
+        daysToEmerge = 21..35,
+        daysToHarvest = 150..300,
+        sowOutdoorsWeeksAfterFrost = -8,
+        harvestDurationWeeks = 4,
+        waterNeed = WaterNeed.HIGH,
+        sunExposure = SunExposure.FULL_SUN,
+        goodCompanions = listOf(
+            CompanionRelation("concombre", "Association igname x concombre x haricot x malanga pratiquée en Guadeloupe (Guide tropical CIRAD/RITA, FT17)", CompanionBenefitType.GENERAL_SYNERGY),
+            CompanionRelation("haricot_nain", "Association igname x concombre x haricot x malanga pratiquée en Guadeloupe ; igname x haricot en Martinique (FT17)", CompanionBenefitType.GENERAL_SYNERGY),
+            CompanionRelation("mais_doux", "Igname associée au maïs ou au haricot en Martinique (Guide tropical CIRAD/RITA, FT17)", CompanionBenefitType.GENERAL_SYNERGY),
+            CompanionRelation("taro_madere", "Association igname x dachine pratiquée en Martinique (Guide tropical CIRAD/RITA, FT17)", CompanionBenefitType.GENERAL_SYNERGY),
+        ),
+        advice = "Planter des fragments de tubercule de 80 à 150 g, germés, à 5 cm au sommet d'un billon (janvier à juin en Martinique). Tuteurer à 2 m et palisser ; arroser sans excès (environ 100 mm par mois les trois premiers mois). Ne jamais la faire succéder à elle-même : nématodes et anthracnose, 3 ans de pause. Récolte au jaunissement des feuilles, 5 à 10 mois après plantation.",
+        climates = setOf(Climate.TROPICAL),
+        indicative = true,
+    )
+
+    val TARO_MADERE = Vegetable(
+        id = "taro_madere",
+        name = "Madère (dachine, taro)",
+        latinName = "Colocasia esculenta",
+        family = BotanicalFamily.ARACEAE,
+        squareFootDensity = 1,
+        spacingInRowCm = 80,
+        spacingBetweenRowsCm = 100,
+        tempGerminationMin = 20,
+        tempOptimalMin = 25,
+        tempOptimalMax = 30,
+        daysToEmerge = 14..28,
+        daysToHarvest = 150..330,
+        transplantWeeksAfterFrost = 1,
+        harvestDurationWeeks = 8,
+        waterNeed = WaterNeed.HIGH,
+        sunExposure = SunExposure.FULL_SUN,
+        goodCompanions = listOf(
+            CompanionRelation("igname", "Association igname x dachine pratiquée en Martinique (Guide tropical CIRAD/RITA, FT17)", CompanionBenefitType.GENERAL_SYNERGY),
+            CompanionRelation("tomate", "Association dachine x tomate x oignon pays à densité réduite (Chambre d'agriculture de la Martinique)", CompanionBenefitType.GENERAL_SYNERGY),
+            CompanionRelation("oignon", "Association dachine x tomate x oignon pays à densité réduite (Chambre d'agriculture de la Martinique)", CompanionBenefitType.GENERAL_SYNERGY),
+        ),
+        advice = "Planter les rejets latéraux de la base des pieds, tôt en saison des pluies, dans un sol frais et riche ; pailler. Plante de zones humides, très gourmande en eau. Récolte étalée, 5 à 11 mois après plantation.",
+        climates = setOf(Climate.TROPICAL),
+        indicative = true,
+    )
+
+    val PAPAYER = Vegetable(
+        id = "papayer",
+        name = "Papayer",
+        latinName = "Carica papaya",
+        family = BotanicalFamily.CARICACEAE,
+        squareFootDensity = 1,
+        spacingInRowCm = 200,
+        spacingBetweenRowsCm = 250,
+        tempGerminationMin = 20,
+        tempOptimalMin = 25,
+        tempOptimalMax = 32,
+        daysToEmerge = 10..21,
+        daysToHarvest = 240..270,
+        sowIndoorsWeeksBeforeFrost = 6,
+        transplantWeeksAfterFrost = 0,
+        harvestDurationWeeks = 52,
+        waterNeed = WaterNeed.HIGH,
+        sunExposure = SunExposure.FULL_SUN,
+        advice = "Semer en pépinière 5 à 6 semaines au plus avant la plantation, à placer en début de saison des pluies (trois plants par poquet, puis ne garder qu'un hermaphrodite). Sol drainé : très sensible à l'asphyxie des racines ; abri du vent. Sous 25 °C, le cycle s'allonge et les fruits sont moins sucrés. Culture épuisante : apporter de la matière organique.",
+        climates = setOf(Climate.TROPICAL),
+        indicative = true,
+    )
+
+    val POIS_D_ANGOLE = Vegetable(
+        id = "pois_d_angole",
+        name = "Pois d'angole (pois cajan)",
+        latinName = "Cajanus cajan",
+        family = BotanicalFamily.FABACEAE,
+        squareFootDensity = 1,
+        spacingInRowCm = 100,
+        spacingBetweenRowsCm = 100,
+        tempGerminationMin = 15,
+        tempOptimalMin = 20,
+        tempOptimalMax = 35,
+        daysToEmerge = 7..14,
+        daysToHarvest = 120..180,
+        sowOutdoorsWeeksAfterFrost = 0,
+        harvestDurationWeeks = 26,
+        waterNeed = WaterNeed.LOW,
+        sunExposure = SunExposure.FULL_SUN,
+        goodCompanions = listOf(
+            CompanionRelation("mais_doux", "Ambrevade associée au maïs à La Réunion (guide du jardinage au naturel, TCO) ; légumineuse fixatrice d'azote", CompanionBenefitType.NITROGEN_FIXATION),
+        ),
+        advice = "Semer en place au début de la saison des pluies : 2 à 4 graines par trou, à 2-5 cm, un trou par mètre, puis ne garder qu'un plant. Arbuste de 1 m sur 1 m, résistant à la sécheresse, productif surtout les deux premières années. Fixe l'azote : bonne tête de rotation. Sensible au gel.",
+        climates = setOf(Climate.TROPICAL),
+        indicative = true,
+    )
+
     val ALL_VEGETABLES: List<Vegetable> = listOf(
         TOMATE,
         TOMATE_CERISE,
@@ -1923,6 +2060,11 @@ object VegetableCatalog {
         ASPERGE,
         TOURNESOL,
         MAIS_DOUX,
+        PATATE_DOUCE,
+        IGNAME,
+        TARO_MADERE,
+        PAPAYER,
+        POIS_D_ANGOLE,
     )
 
     val ALL: List<Vegetable> = ALL_VEGETABLES
