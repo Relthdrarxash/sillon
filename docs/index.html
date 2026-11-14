@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sillon — Guide potager hors-ligne</title>
+<meta name="description" content="Calendrier de semis adapté aux gelées de votre département, suivi de croissance des parcelles et repérage des maladies hors-ligne.">
+<style>
+:root {
+  --bg: #faf8f4;
+  --fg: #1c1b18;
+  --muted: #5a574f;
+  --panel: #ffffff;
+  --line: #e4dfd4;
+  --accent: #2c6e49;
+  --accent-solid: #2c6e49;
+  --on-accent: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111512;
+    --fg: #f4f2ec;
+    --muted: #b2afa6;
+    --panel: #19201b;
+    --line: #28332b;
+    --accent: #68b684;
+    --accent-solid: #3d8b5b;
+    --on-accent: #ffffff;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.65 system-ui, -apple-system, sans-serif; }
+.wrap { width: min(1000px, calc(100% - 36px)); margin-inline: auto; }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; color: var(--fg); text-decoration: none; }
+nav.nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.94rem; }
+nav.nav a { color: var(--muted); text-decoration: none; font-weight: 600; }
+nav.nav a:hover { color: var(--accent); }
+.hero { padding-block: 48px 34px; display: grid; gap: 20px; }
+.kicker { margin: 0; color: var(--accent); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3.1rem); line-height: 1.1; }
+.lead { margin: 0; color: var(--muted); max-width: 62ch; font-size: 1.08rem; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-block; padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); text-decoration: none; font-weight: 700; font-size: 0.95rem; }
+.btn.primary { background: var(--accent-solid); border-color: var(--accent-solid); color: var(--on-accent); }
+section { padding-block: 34px; border-top: 1px solid var(--line); }
+h2 { margin: 0 0 8px; font-size: 1.55rem; }
+.sub { margin: 0 0 20px; color: var(--muted); }
+.sim-box { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: grid; gap: 16px; }
+.sim-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.sim-box select, .sim-box input[type=range] { width: 100%; font: inherit; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.tasks { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.tcard { padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); }
+.tcard h3 { margin: 0 0 6px; font-size: 1rem; color: var(--accent); }
+.tcard p { margin: 0; font-size: 0.92rem; color: var(--muted); }
+.growth { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.stage { padding: 10px; border-radius: 12px; border: 1px solid var(--line); text-align: center; font-size: 0.85rem; color: var(--muted); }
+.stage.active { border-color: var(--accent-solid); background: color-mix(in srgb, var(--accent-solid) 14%, var(--panel)); color: var(--fg); font-weight: 700; }
+.foot { border-top: 1px solid var(--line); padding-block: 28px 44px; color: var(--muted); font-size: 0.93rem; display: grid; gap: 8px; }
+.foot a { color: var(--fg); }
+</style>
+</head>
+<body>
+<header class="wrap top">
+  <a class="brand" href="./">Sillon</a>
+  <nav class="nav" aria-label="Navigation">
+    <a href="#simulateur">Simulateur</a>
+    <a href="#atelier">Pilmil Studio</a>
+    <a href="https://github.com/Relthdrarxash/sillon">Code source</a>
+  </nav>
+</header>
+<main>
+<div class="wrap hero">
+  <p class="kicker">Potager &amp; Agronomie · 100 % hors-ligne</p>
+  <h1>Le calendrier de semis calé sur les gelées de votre jardin.</h1>
+  <p class="lead">Sillon calcule vos fenêtres de semis selon votre département et votre altitude, projette la croissance de vos parcelles dans le temps et aide à repérer les maladies foliaires sans envoyer aucune photo sur Internet.</p>
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/Relthdrarxash/sillon/releases">Télécharger l'APK</a>
+    <a class="btn" href="https://github.com/Relthdrarxash/sillon">Voir le code source</a>
+  </div>
+</div>
+
+<section class="wrap" id="simulateur">
+  <h2>Simulateur de saison &amp; croissance</h2>
+  <p class="sub">Choisissez un département et faites glisser le mois pour voir les travaux de la quinzaine et l'évolution d'une culture.</p>
+  <div class="sim-box">
+    <div class="sim-grid">
+      <label>Département / climat
+        <select id="si-dept">
+          <option value="105">Ille-et-Vilaine (35) · Gelées ~15 avril</option>
+          <option value="112">Île-de-France (75) · Gelées ~22 avril</option>
+          <option value="132">Auvergne (63) · Gelées ~12 mai</option>
+          <option value="84">Bouches-du-Rhône (13) · Gelées ~25 mars</option>
+          <option value="130">Alsace (67) · Gelées ~10 mai</option>
+          <option value="0">La Réunion (974) · Climat tropical</option>
+        </select>
+      </label>
+      <label>Période simulée : <strong id="si-date-label">15 mai</strong>
+        <input id="si-day" type="range" min="45" max="285" value="135">
+      </label>
+    </div>
+    <p id="si-frost" style="margin:0;font-weight:700"></p>
+    <div class="tasks" id="si-tasks"></div>
+    <div>
+      <p style="margin:0 0 8px;font-size:0.9rem;color:var(--muted)">Aperçu d'une parcelle (Tomate / Courgette) à cette période :</p>
+      <div class="growth" id="si-growth">
+        <div class="stage">1. Semis / Graine</div>
+        <div class="stage">2. Jeune pousse</div>
+        <div class="stage">3. Feuillage &amp; fleurs</div>
+        <div class="stage">4. Récolte</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="atelier">
+  <h2>Pilmil Studio</h2>
+  <p class="sub">Suite d'applications libres, sans réseau, sans publicité et sans compte.</p>
+  <p><a href="https://relthdrarxash.github.io/sommelle/">Sommelle</a> · <a href="https://relthdrarxash.github.io/lunaison/">Lunaison</a> · <a href="https://relthdrarxash.github.io/respire/fr/">Respire</a> · <a href="https://relthdrarxash.github.io/sauve/">Sauve</a> · <a href="https://relthdrarxash.github.io/fredonne/">Fredonne</a></p>
+</section>
+</main>
+<footer class="wrap foot">
+  <p>Sillon — Licence libre MPL-2.0 · Contact : <a href="mailto:pilmil.studio@proton.me">pilmil.studio@proton.me</a></p>
+</footer>
+<script>
+(function(){
+  const MONTHS = ["janv.","févr.","mars","avril","mai","juin","juil.","août","sept.","oct.","nov."];
+  function dayToLabel(doy) {
+    const dt = new Date(2026, 0, doy);
+    return `${dt.getDate()} ${MONTHS[dt.getMonth()]}`;
+  }
+  function update() {
+    const frostDoy = parseInt(document.getElementById("si-dept").value, 10);
+    const doy = parseInt(document.getElementById("si-day").value, 10);
+    document.getElementById("si-date-label").textContent = dayToLabel(doy);
+    const diff = doy - frostDoy;
+    const frostEl = document.getElementById("si-frost");
+    if (frostDoy === 0) {
+      frostEl.textContent = "Zone tropicale : plantation toute l'année, privilégiez les cultures adaptées à l'humidité.";
+    } else if (diff < 0) {
+      frostEl.textContent = `Dernières gelées repères dans ${-diff} jours (${dayToLabel(frostDoy)}).`;
+    } else {
+      frostEl.textContent = `Dernières gelées passées depuis ${diff} jours (${dayToLabel(frostDoy)}).`;
+    }
+    const cards = [];
+    if (frostDoy === 0 || diff < -14) {
+      cards.push({ t: "Semis sous abri", c: "Tomate, Poivron, Aubergine, Basilic" });
+      cards.push({ t: "Pleine terre rustique", c: "Pois, Fève, Épinard, Radis" });
+    } else if (diff >= -14 && diff <= 20) {
+      cards.push({ t: "Pleine terre", c: "Carotte, Betterave, Haricot, Courgette" });
+      cards.push({ t: "Repiquage", c: "Laitue, Chou, Tomate (après gelées)" });
+    } else if (diff > 20 && diff <= 95) {
+      cards.push({ t: "Entretien & paillage", c: "Tomate, Courgette, Concombre, Basilic" });
+      cards.push({ t: "Récoltes en cours", c: "Radis, Laitue, Pois, premières Courgettes" });
+    } else {
+      cards.push({ t: "Semis d'automne", c: "Mâche, Épinard, Radis noir, Navet" });
+      cards.push({ t: "Récoltes de garde", c: "Courge, Tomate tardive, Haricot sec" });
+    }
+    document.getElementById("si-tasks").innerHTML = cards.map(x => `<div class="tcard"><h3>${x.t}</h3><p>${x.c}</p></div>`).join("");
+    const stageIdx = frostDoy === 0 ? 2 : (diff < 0 ? 0 : diff < 35 ? 1 : diff < 75 ? 2 : 3);
+    Array.from(document.getElementById("si-growth").children).forEach((el, i) => {
+      el.classList.toggle("active", i === stageIdx);
+    });
+  }
+  document.getElementById("si-dept").addEventListener("change", update);
+  document.getElementById("si-day").addEventListener("input", update);
+  update();
+})();
+</script>
+</body>
+</html>
