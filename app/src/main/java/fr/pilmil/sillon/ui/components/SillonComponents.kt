@@ -58,8 +58,8 @@ fun SillonCard(
         shape = RoundedCornerShape(16.dp),
         color = backgroundColor,
         border = BorderStroke(1.dp, borderColor),
-        tonalElevation = 0.dp,
-        shadowElevation = 0.5.dp,
+        tonalElevation = 1.dp,
+        shadowElevation = 2.5.dp,
     ) {
         Box(modifier = Modifier.padding(16.dp)) {
             content()

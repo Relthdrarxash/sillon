@@ -1,5 +1,11 @@
 package fr.pilmil.sillon.ui.garden
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.aspectRatio
@@ -20,6 +26,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.contentDescription
@@ -132,7 +139,23 @@ fun GardenScene(
     onCellClick: (row: Int, col: Int) -> Unit,
     isDark: Boolean,
     modifier: Modifier = Modifier,
+    windEnabled: Boolean = false,
 ) {
+    val windPhase = if (windEnabled) {
+        val transition = rememberInfiniteTransition(label = "gardenWind")
+        val phase by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = (2.0 * PI).toFloat(),
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 4800, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart,
+            ),
+            label = "windPhase",
+        )
+        phase
+    } else {
+        0f
+    }
     val measurer = rememberTextMeasurer()
     val byId = remember(vegetables) { vegetables.associateBy { it.id } }
     val look = remember(isDark) { Look(isDark) }
@@ -178,7 +201,7 @@ fun GardenScene(
         drawBackdrop(layout, look)
         drawGround(layout, look)
         for (pl in layout.placements) {
-            drawParcel(layout.proj, look, pl, byId, today, neighborhood, selectedCell, measurer)
+            drawParcel(layout.proj, look, pl, byId, today, neighborhood, selectedCell, measurer, windPhase)
         }
     }
 }
@@ -348,6 +371,7 @@ private fun DrawScope.drawParcel(
     neighborhood: Map<Pair<Int, Int>, CellNeighborhood>,
     selectedCell: Pair<Int, Int>?,
     measurer: TextMeasurer,
+    windPhase: Float,
 ) {
     val fp = pl.fp
     val s = pl.scale
@@ -357,7 +381,7 @@ private fun DrawScope.drawParcel(
     val lineW = max(1.2f, proj.scaleAt(fp.z0) * 0.008f * s)
 
     // Ombre de contact : plusieurs polygones décalés vers la droite et l'avant, de plus en plus étroits.
-    for ((grow, alpha) in listOf(0.16f to 0.035f, 0.12f to 0.04f, 0.085f to 0.05f, 0.05f to 0.06f, 0.02f to 0.07f)) {
+    for ((grow, alpha) in listOf(0.18f to 0.045f, 0.13f to 0.06f, 0.09f to 0.075f, 0.055f to 0.09f, 0.02f to 0.11f)) {
         val e = grow * s
         drawPath(
             polygon(
@@ -466,11 +490,11 @@ private fun DrawScope.drawParcel(
         val x = fp.innerX0 + c * fp.cell
         drawLine(Color(0xFF2E1D12).copy(alpha = 0.3f), P(x, pl.soilY, fp.innerZ0), P(x, pl.soilY, fp.innerZ1), strokeWidth = lineW)
     }
-    // Ombres portées par les planches sur la terre (gauche et fond plus marqués).
-    val sh = 0.09f * s
-    drawPath(polygon(P(fp.innerX0, pl.soilY, fp.innerZ1 - sh), P(fp.innerX1, pl.soilY, fp.innerZ1 - sh), P(fp.innerX1, pl.soilY, fp.innerZ1), P(fp.innerX0, pl.soilY, fp.innerZ1)), Color.Black.copy(alpha = 0.22f))
-    drawPath(polygon(P(fp.innerX0, pl.soilY, fp.innerZ0), P(fp.innerX0 + sh, pl.soilY, fp.innerZ0), P(fp.innerX0 + sh, pl.soilY, fp.innerZ1), P(fp.innerX0, pl.soilY, fp.innerZ1)), Color.Black.copy(alpha = 0.2f))
-    drawPath(polygon(P(fp.innerX1 - sh * 0.6f, pl.soilY, fp.innerZ0), P(fp.innerX1, pl.soilY, fp.innerZ0), P(fp.innerX1, pl.soilY, fp.innerZ1), P(fp.innerX1 - sh * 0.6f, pl.soilY, fp.innerZ1)), Color.Black.copy(alpha = 0.1f))
+    // Ombres portées par les planches sur la terre (gauche et fond plus marqués pour le relief intérieur).
+    val sh = 0.12f * s
+    drawPath(polygon(P(fp.innerX0, pl.soilY, fp.innerZ1 - sh), P(fp.innerX1, pl.soilY, fp.innerZ1 - sh), P(fp.innerX1, pl.soilY, fp.innerZ1), P(fp.innerX0, pl.soilY, fp.innerZ1)), Color.Black.copy(alpha = 0.30f))
+    drawPath(polygon(P(fp.innerX0, pl.soilY, fp.innerZ0), P(fp.innerX0 + sh, pl.soilY, fp.innerZ0), P(fp.innerX0 + sh, pl.soilY, fp.innerZ1), P(fp.innerX0, pl.soilY, fp.innerZ1)), Color.Black.copy(alpha = 0.28f))
+    drawPath(polygon(P(fp.innerX1 - sh * 0.6f, pl.soilY, fp.innerZ0), P(fp.innerX1, pl.soilY, fp.innerZ0), P(fp.innerX1, pl.soilY, fp.innerZ1), P(fp.innerX1 - sh * 0.6f, pl.soilY, fp.innerZ1)), Color.Black.copy(alpha = 0.14f))
 
     // Faces intérieures visibles : fond, et côtés selon la position de la caméra.
     drawPath(
@@ -548,7 +572,19 @@ private fun DrawScope.drawParcel(
             val base = P(fp.cellCenterX(c), pl.soilY, cz)
             val unit = proj.scaleAt(cz, pl.soilY) * fp.cell
             val growth = plantGrowth(veg, slot.plantedDate, today)
-            drawPlant(veg, growth, base, unit, tone, seed = r * 31 + c * 17 + veg.id.hashCode(), simple = !pl.selected)
+            // Ombre de contact douce au pied de la plante (lumière venant du haut gauche -> décalée bas droite).
+            val shadowR = unit * (0.22f + 0.16f * growth)
+            drawOval(
+                Color.Black.copy(alpha = if (look.dark) 0.28f else 0.18f),
+                Offset(base.x - shadowR * 0.72f, base.y - shadowR * 0.28f),
+                Size(shadowR * 1.7f, shadowR * 0.78f),
+            )
+            val swayDeg = if (windPhase != 0f) sin(windPhase + r * 0.8f + c * 1.3f) * (1.2f + 0.8f * growth) else 0f
+            withTransform({
+                if (swayDeg != 0f) rotate(degrees = swayDeg, pivot = base)
+            }) {
+                drawPlant(veg, growth, base, unit, tone, seed = r * 31 + c * 17 + veg.id.hashCode(), simple = !pl.selected)
+            }
         }
     }
 

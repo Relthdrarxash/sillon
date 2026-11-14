@@ -29,6 +29,9 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
@@ -37,12 +40,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import fr.pilmil.sillon.ui.components.SillonOutlinedButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,7 +75,10 @@ import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonButton
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.theme.SillonPalette
+import kotlinx.coroutines.delay
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,6 +100,22 @@ fun GardenScreen(
     var perspectiveView by remember { mutableStateOf(initialPerspective) }
     val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     var showAddParcelDialog by remember { mutableStateOf(false) }
+    var previewDayOffset by rememberSaveable { mutableIntStateOf(0) }
+    var isPlayingGrowth by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(isPlayingGrowth) {
+        if (isPlayingGrowth) {
+            if (previewDayOffset >= 90) previewDayOffset = 0
+            while (isPlayingGrowth && previewDayOffset < 90) {
+                delay(65L)
+                previewDayOffset = (previewDayOffset + 2).coerceAtMost(90)
+            }
+            isPlayingGrowth = false
+        }
+    }
+
+    val displayedDate = today.plusDays(previewDayOffset.toLong())
+    val growthDateFormatter = remember { DateTimeFormatter.ofPattern("d MMM", Locale.FRENCH) }
 
     val activeParcel = garden.parcels.getOrNull(selectedParcelIndex) ?: garden.parcels.firstOrNull()
 
@@ -180,7 +207,7 @@ fun GardenScreen(
                         parcels = garden.parcels,
                         selectedIndex = garden.parcels.indexOf(activeParcel),
                         vegetables = vegetables,
-                        today = today,
+                        today = displayedDate,
                         selectedCell = highlightedCell,
                         onSelectParcel = {
                             selectedParcelIndex = it
@@ -191,7 +218,23 @@ fun GardenScreen(
                             selectedSlotCoord = Pair(r, c)
                         },
                         isDark = isDark,
+                        windEnabled = true,
                         modifier = Modifier.clip(RoundedCornerShape(20.dp)),
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    GrowthPreviewBar(
+                        dayOffset = previewDayOffset,
+                        dateLabel = displayedDate.format(growthDateFormatter),
+                        isPlaying = isPlayingGrowth,
+                        onTogglePlay = { isPlayingGrowth = !isPlayingGrowth },
+                        onOffsetChange = {
+                            isPlayingGrowth = false
+                            previewDayOffset = it
+                        },
+                        onReset = {
+                            isPlayingGrowth = false
+                            previewDayOffset = 0
+                        },
                     )
                 } else {
                     ParcelGridView(
@@ -649,6 +692,88 @@ private fun NeighborhoodCard(parcel: Parcel, vegetables: List<Vegetable>) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+    }
+}
+
+/** Barre de projection temporelle pour regarder les cultures pousser jour après jour. */
+@Composable
+private fun GrowthPreviewBar(
+    dayOffset: Int,
+    dateLabel: String,
+    isPlaying: Boolean,
+    onTogglePlay: () -> Unit,
+    onOffsetChange: (Int) -> Unit,
+    onReset: () -> Unit,
+) {
+    SillonCard(
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        borderColor = MaterialTheme.colorScheme.outline,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(SillonPalette.SageContainer)
+                        .clickable { onTogglePlay() }
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                ) {
+                    Icon(
+                        imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                        contentDescription = if (isPlaying) "Mettre en pause" else "Voir pousser",
+                        tint = SillonPalette.SageDark,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Text(
+                        text = if (isPlaying) "Pause" else "Voir pousser",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = SillonPalette.SageDark,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Text(
+                        text = if (dayOffset == 0) "Aujourd'hui ($dateLabel)" else "+$dayOffset j · $dateLabel",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    if (dayOffset > 0) {
+                        IconButton(
+                            onClick = onReset,
+                            modifier = Modifier.size(28.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Replay,
+                                contentDescription = "Revenir à aujourd'hui",
+                                tint = SillonPalette.SageDark,
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
+                    }
+                }
+            }
+            Slider(
+                value = dayOffset.toFloat(),
+                onValueChange = { onOffsetChange(it.toInt()) },
+                valueRange = 0f..90f,
+                colors = SliderDefaults.colors(
+                    thumbColor = SillonPalette.Sage,
+                    activeTrackColor = SillonPalette.Sage,
+                    inactiveTrackColor = SillonPalette.SageContainer,
+                ),
+            )
         }
     }
 }
