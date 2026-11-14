@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.pilmil.sillon.model.Disease
 import fr.pilmil.sillon.model.PlantOrgan
+import fr.pilmil.sillon.ui.components.GlossaryText
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.theme.SillonPalette
@@ -284,7 +285,7 @@ private fun DiseaseCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     disease.symptoms.forEach { symptom ->
-                        Text(
+                        GlossaryText(
                             text = "• $symptom",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -311,7 +312,7 @@ private fun DiseaseCard(
                                 modifier = Modifier.size(16.dp),
                             )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(
+                            GlossaryText(
                                 text = remedy,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface,
@@ -331,7 +332,7 @@ private fun DiseaseCard(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         disease.preventiveMeasures.forEach { prev ->
-                            Text(
+                            GlossaryText(
                                 text = "→ $prev",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,

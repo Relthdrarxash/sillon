@@ -190,11 +190,12 @@ fun SillonBadge(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
             }
-            Text(
+            GlossaryText(
                 text = text,
                 color = textColor,
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
+                underlineColor = textColor,
             )
         }
     }

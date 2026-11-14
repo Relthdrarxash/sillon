@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import fr.pilmil.sillon.model.BotanicalFamily
 import fr.pilmil.sillon.model.Climate
 import fr.pilmil.sillon.model.Vegetable
+import fr.pilmil.sillon.ui.components.GlossaryText
 import fr.pilmil.sillon.ui.components.SillonBadge
 import fr.pilmil.sillon.ui.components.SillonCard
 import fr.pilmil.sillon.ui.theme.SillonPalette
@@ -336,7 +337,7 @@ private fun VegetableCard(
                         fontWeight = FontWeight.Bold,
                     )
                     Spacer(modifier = Modifier.height(2.dp))
-                    Text(
+                    GlossaryText(
                         text = vegetable.advice,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface,
