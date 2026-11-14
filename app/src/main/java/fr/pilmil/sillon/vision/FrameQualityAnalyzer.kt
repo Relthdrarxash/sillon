@@ -9,11 +9,11 @@ import kotlin.math.abs
  * Statut de qualité de cadrage de la feuille pour le diagnostic IA.
  */
 enum class FrameQualityStatus {
-    /** 🟩 Optimal : nette, bien éclairée, feuille bien présente dans le cadre. */
+    /** Optimal : nette, bien éclairée, feuille bien présente dans le cadre. */
     OPTIMAL,
-    /** 🟨 Avertissement : acceptable mais conditions sous-optimales (légèrement sombre, un peu loin). */
+    /** Avertissement : acceptable mais conditions sous-optimales (légèrement sombre, un peu loin). */
     WARNING,
-    /** 🟥 Inexploitable : floue, trop sombre, éblouissement ou absence de végétation. */
+    /** Inexploitable : floue, trop sombre, éblouissement ou absence de végétation. */
     UNUSABLE,
 }
 
