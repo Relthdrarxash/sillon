@@ -99,6 +99,81 @@ h2 { font-size:clamp(1.6rem,4vw,2.3rem); line-height:1.1; margin:0 0 8px; text-w
   </div>
   <p class="sub">Captures réalisées avec des données d'exemple.</p>
 </section>
+<section class="wrap" id="simulateur">
+  <h2>Simulateur de saison &amp; croissance</h2>
+  <p class="sub">Choisissez un département et faites glisser la période pour simuler les gelées, les semis et l'évolution d'une parcelle.</p>
+  <div style="border:1px solid var(--line);border-radius:20px;padding:22px;background:var(--panel);display:grid;gap:16px">
+    <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+      <label>Département / climat
+        <select id="si-dept" style="width:100%;font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg)">
+          <option value="105">Ille-et-Vilaine (35) · Gelées ~15 avril</option>
+          <option value="112">Île-de-France (75) · Gelées ~22 avril</option>
+          <option value="132">Auvergne (63) · Gelées ~12 mai</option>
+          <option value="84">Bouches-du-Rhône (13) · Gelées ~25 mars</option>
+          <option value="130">Alsace (67) · Gelées ~10 mai</option>
+          <option value="0">La Réunion (974) · Climat tropical</option>
+        </select>
+      </label>
+      <label>Période simulée : <strong id="si-date-label">15 mai</strong>
+        <input id="si-day" type="range" min="45" max="285" value="135" style="width:100%">
+      </label>
+    </div>
+    <p id="si-frost" style="margin:0;font-weight:700"></p>
+    <div id="si-tasks" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"></div>
+    <div id="si-growth" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">1. Semis / Graine</div>
+      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">2. Jeune pousse</div>
+      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">3. Feuillage</div>
+      <div style="padding:10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-size:0.85rem">4. Récolte</div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  const MONTHS = ["janv.","févr.","mars","avril","mai","juin","juil.","août","sept.","oct.","nov."];
+  function dayToLabel(doy) {
+    const dt = new Date(2026, 0, doy);
+    return `${dt.getDate()} ${MONTHS[dt.getMonth()]}`;
+  }
+  function update() {
+    const frostDoy = parseInt(document.getElementById("si-dept").value, 10);
+    const doy = parseInt(document.getElementById("si-day").value, 10);
+    document.getElementById("si-date-label").textContent = dayToLabel(doy);
+    const diff = doy - frostDoy;
+    const frostEl = document.getElementById("si-frost");
+    if (frostDoy === 0) {
+      frostEl.textContent = "Zone tropicale : plantation toute l'année selon l'humidité.";
+    } else if (diff < 0) {
+      frostEl.textContent = `Dernières gelées repères dans ${-diff} jours (${dayToLabel(frostDoy)}).`;
+    } else {
+      frostEl.textContent = `Dernières gelées passées depuis ${diff} jours (${dayToLabel(frostDoy)}).`;
+    }
+    const cards = [];
+    if (frostDoy === 0 || diff < -14) {
+      cards.push({ t: "Semis sous abri", c: "Tomate, Poivron, Aubergine, Basilic" });
+      cards.push({ t: "Pleine terre rustique", c: "Pois, Fève, Épinard, Radis" });
+    } else if (diff >= -14 && diff <= 20) {
+      cards.push({ t: "Pleine terre", c: "Carotte, Betterave, Haricot, Courgette" });
+      cards.push({ t: "Repiquage", c: "Laitue, Chou, Tomate (après gelées)" });
+    } else if (diff > 20 && diff <= 95) {
+      cards.push({ t: "Entretien & paillage", c: "Tomate, Courgette, Concombre, Basilic" });
+      cards.push({ t: "Récoltes en cours", c: "Radis, Laitue, Pois, premières Courgettes" });
+    } else {
+      cards.push({ t: "Semis d'automne", c: "Mâche, Épinard, Radis noir, Navet" });
+      cards.push({ t: "Récoltes de garde", c: "Courge, Tomate tardive, Haricot sec" });
+    }
+    document.getElementById("si-tasks").innerHTML = cards.map(x => `<div style="padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--bg)"><h3 style="margin:0 0 6px;font-size:1rem">${x.t}</h3><p style="margin:0;font-size:0.92rem;color:var(--muted)">${x.c}</p></div>`).join("");
+    const stageIdx = frostDoy === 0 ? 2 : (diff < 0 ? 0 : diff < 35 ? 1 : diff < 75 ? 2 : 3);
+    Array.from(document.getElementById("si-growth").children).forEach((el, i) => {
+      el.style.borderColor = i === stageIdx ? "var(--accent, #2c6e49)" : "var(--line)";
+      el.style.fontWeight = i === stageIdx ? "700" : "400";
+    });
+  }
+  document.getElementById("si-dept").addEventListener("change", update);
+  document.getElementById("si-day").addEventListener("input", update);
+  update();
+})();
+</script>
 <section class="wrap" id="vie-privee">
   <h2>Rien ne sort du téléphone</h2>
   <ul class="rules" style="margin-top:20px">
