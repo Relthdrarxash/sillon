@@ -15,6 +15,8 @@ android {
         targetSdk = 36
         versionCode = System.getenv("SILLON_VERSION_CODE")?.toIntOrNull() ?: 10000
         versionName = System.getenv("SILLON_VERSION_NAME") ?: "1.0.0-dev"
+        manifestPlaceholders["allowAutoBackup"] =
+            providers.gradleProperty("pilmil.allowAutoBackup").getOrElse("false")
     }
 
     signingConfigs {

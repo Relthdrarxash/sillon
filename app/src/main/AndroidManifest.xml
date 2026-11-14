@@ -13,7 +13,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="${allowAutoBackup}"
         android:backupAgent=".backup.SillonBackupAgent"
         android:fullBackupOnly="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
