@@ -58,6 +58,7 @@ import fr.pilmil.sillon.model.Vegetable
 import fr.pilmil.sillon.model.WaterNeed
 import fr.pilmil.sillon.ui.catalog.CatalogScreen
 import fr.pilmil.sillon.ui.dashboard.DashboardScreen
+import fr.pilmil.sillon.ui.dashboard.ForecastHorizon
 import fr.pilmil.sillon.ui.doctor.DoctorScreen
 import fr.pilmil.sillon.ui.garden.GardenScreen
 import fr.pilmil.sillon.ui.settings.SettingsScreen
@@ -275,15 +276,46 @@ class MainActivity : ComponentActivity() {
                         when (currentScreen) {
                             SillonScreen.DASHBOARD -> {
                                 val today = LocalDate.now()
-                                val plan = remember(garden, today) { DashboardPlanner.plan(garden, today) }
-                                val tip = remember(today) {
-                                    val withAdvice = vegetables.filter { it.advice.isNotBlank() }
-                                    withAdvice.getOrNull(today.dayOfYear % withAdvice.size.coerceAtLeast(1))?.let { "Conseil du jour : ${it.name}" to it.advice }
+                                val showIntroHints = remember {
+                                    val visits = prefs.dashboardVisits + 1
+                                    prefs.dashboardVisits = visits
+                                    visits <= 3
+                                }
+                                val horizons = remember(garden, today) {
+                                    listOf(
+                                        ForecastHorizon("Aujourd'hui", "Travaux autour du jour J", DashboardPlanner.plan(garden, today)),
+                                        ForecastHorizon("Prochains jours", "Horizon à +3 jours", DashboardPlanner.plan(garden, today.plusDays(3))),
+                                        ForecastHorizon("Semaine suivante", "Horizon à +7 jours", DashboardPlanner.plan(garden, today.plusDays(7))),
+                                        ForecastHorizon("À venir", "Horizon à +15 jours", DashboardPlanner.plan(garden, today.plusDays(15))),
+                                    )
+                                }
+                                val activeCropIds = remember(garden) {
+                                    garden.parcels.flatMap { it.slots }.mapNotNull { it.vegetableId }.toSet()
+                                }
+                                val activeGardenMarker = remember(garden, activeCropIds) {
+                                    val parcelCount = garden.parcels.size
+                                    val plantedCount = garden.parcels.sumOf { p -> p.slots.count { it.vegetableId != null } }
+                                    when {
+                                        parcelCount == 0 -> null
+                                        plantedCount == 0 -> "$parcelCount parcelle${if (parcelCount > 1) "s" else ""} prête${if (parcelCount > 1) "s" else ""} à planter"
+                                        else -> "$parcelCount parcelle${if (parcelCount > 1) "s" else ""} · $plantedCount culture${if (plantedCount > 1) "s" else ""} en place"
+                                    }
+                                }
+                                val tip = remember(today, activeCropIds) {
+                                    val plantedAdvice = vegetables.filter { it.id in activeCropIds && it.advice.isNotBlank() }
+                                    val pool = plantedAdvice.ifEmpty {
+                                        vegetables.filter { it.advice.isNotBlank() }
+                                    }
+                                    pool.getOrNull(today.dayOfYear % pool.size.coerceAtLeast(1))?.let {
+                                        "${if (plantedAdvice.isNotEmpty()) "Sur vos parcelles" else "Repère"} · ${it.name}" to it.advice
+                                    }
                                 }
                                 DashboardScreen(
-                                    plan = plan,
+                                    horizons = horizons,
                                     placeLabel = departmentCode?.let(FrenchFrostCatalog::getByCode)?.let { "${it.name} (${it.code})" },
                                     tip = tip,
+                                    showIntroHints = showIntroHints,
+                                    activeGardenMarker = activeGardenMarker,
                                     onNavigateToGarden = { currentScreen = SillonScreen.GARDEN },
                                     onNavigateToCatalog = { currentScreen = SillonScreen.CATALOG },
                                     onOpenSettings = { pickingDepartment = true },

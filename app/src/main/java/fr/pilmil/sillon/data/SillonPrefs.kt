@@ -25,6 +25,11 @@ class SillonPrefs(context: Context) {
         get() = prefs.getBoolean(KEY_SMART_VIEWFINDER, true)
         set(value) = prefs.edit().putBoolean(KEY_SMART_VIEWFINDER, value).apply()
 
+    /** Nombre d'ouvertures de l'accueil pour masquer les textes d'explication répétitifs. */
+    var dashboardVisits: Int
+        get() = prefs.getInt(KEY_DASHBOARD_VISITS, 0)
+        set(value) = prefs.edit().putInt(KEY_DASHBOARD_VISITS, value).apply()
+
     val department: DepartmentFrost?
         get() = departmentCode?.let(FrenchFrostCatalog::getByCode)
 
@@ -33,5 +38,6 @@ class SillonPrefs(context: Context) {
         const val KEY_DEPARTMENT = "department"
         const val KEY_REMINDERS = "sowing_reminders"
         const val KEY_SMART_VIEWFINDER = "smart_viewfinder"
+        const val KEY_DASHBOARD_VISITS = "dashboard_visits"
     }
 }
