@@ -5,11 +5,16 @@ import fr.pilmil.sillon.data.GardenRepository
 import fr.pilmil.sillon.data.GardenValidationException
 import fr.pilmil.sillon.model.FrostDate
 import fr.pilmil.sillon.model.Garden
+import fr.pilmil.sillon.model.GrowingEnvironment
+import fr.pilmil.sillon.model.LightSource
+import fr.pilmil.sillon.model.Orientation
 import fr.pilmil.sillon.model.Parcel
 import fr.pilmil.sillon.model.ParcelSlot
 import fr.pilmil.sillon.model.ParcelType
+import fr.pilmil.sillon.model.WindExposure
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -110,5 +115,104 @@ class GardenRepositoryTest {
         val dir = tmp.newFolder()
         val repo = GardenRepository(java.io.File(dir, "inexistant"))
         assertFalse(repo.saveGarden(sample()))
+    }
+
+    @Test
+    fun retrocompatibiliteAncienJsonSansChampsBalconOuInterieur() {
+        val legacyJson = """
+            {
+              "id": "legacy_1",
+              "name": "Potager v1.0",
+              "frostDate": { "month": 4, "day": 20 },
+              "parcels": [
+                {
+                  "id": "p1",
+                  "name": "Planche Sud",
+                  "type": "ROW_BED",
+                  "rows": 2,
+                  "cols": 3,
+                  "slots": [
+                    { "row": 0, "col": 0, "vegetableId": "radis", "plantedDate": 1700000000000 }
+                  ]
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val decoded = GardenCodec.decodeAndValidate(legacyJson)
+        assertEquals(GrowingEnvironment.OUTDOOR, decoded.environment)
+        assertNull(decoded.orientation)
+        assertNull(decoded.windExposure)
+        assertFalse(decoded.covered)
+        assertNull(decoded.lightSource)
+        assertNull(decoded.growLightHoursPerDay)
+        assertEquals(1, decoded.parcels.size)
+        assertNull(decoded.parcels[0].containerVolumeLiters)
+    }
+
+    @Test
+    fun serialisationBalconEtInterieurEtValidationBornes() {
+        val balconyGarden = Garden(
+            id = "balcon_1",
+            name = "Mon Balcon",
+            frostDate = FrostDate(4, 15),
+            environment = GrowingEnvironment.BALCONY,
+            orientation = Orientation.SE,
+            windExposure = WindExposure.MEDIUM,
+            covered = true,
+            parcels = listOf(
+                Parcel(
+                    id = "bac_1",
+                    name = "Jardinière aromatique",
+                    type = ParcelType.CONTAINER,
+                    rows = 1,
+                    cols = 3,
+                    containerVolumeLiters = 25,
+                    slots = listOf(ParcelSlot(0, 0, "basilic", 1_700_000_000_000L)),
+                )
+            ),
+        )
+        val encodedBalcony = GardenCodec.encode(balconyGarden)
+        assertEquals(balconyGarden, GardenCodec.decodeAndValidate(encodedBalcony))
+
+        val indoorGarden = Garden(
+            id = "indoor_1",
+            name = "Étagère Salon",
+            frostDate = FrostDate(5, 1),
+            environment = GrowingEnvironment.INDOOR,
+            lightSource = LightSource.GROW_LIGHT,
+            growLightHoursPerDay = 14,
+            parcels = listOf(
+                Parcel(
+                    id = "shelf_1",
+                    name = "Rebord cuisine",
+                    type = ParcelType.WINDOWSILL,
+                    rows = 1,
+                    cols = 2,
+                    containerVolumeLiters = 8,
+                ),
+                Parcel(
+                    id = "shelf_2",
+                    name = "Sous lampe LED",
+                    type = ParcelType.GROW_LIGHT_SHELF,
+                    rows = 1,
+                    cols = 4,
+                    containerVolumeLiters = 12,
+                ),
+            ),
+        )
+        val encodedIndoor = GardenCodec.encode(indoorGarden)
+        assertEquals(indoorGarden, GardenCodec.decodeAndValidate(encodedIndoor))
+
+        val invalidHours = indoorGarden.copy(growLightHoursPerDay = 25)
+        val invalidVolume = balconyGarden.copy(
+            parcels = listOf(balconyGarden.parcels[0].copy(containerVolumeLiters = 0))
+        )
+        assertTrue(
+            runCatching { GardenCodec.decodeAndValidate(GardenCodec.encode(invalidHours)) }.exceptionOrNull() is GardenValidationException
+        )
+        assertTrue(
+            runCatching { GardenCodec.decodeAndValidate(GardenCodec.encode(invalidVolume)) }.exceptionOrNull() is GardenValidationException
+        )
     }
 }

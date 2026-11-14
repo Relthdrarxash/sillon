@@ -87,6 +87,7 @@ gradle.taskGraph.whenReady {
 }
 
 dependencies {
+    implementation(project(":shared"))
     implementation("fr.pilmil.core:core-platform:0.1.0")
     val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom)
@@ -107,6 +108,7 @@ dependencies {
 
     // Inférence locale du diagnostic photo (Apache 2.0), sans accès réseau.
     implementation("com.google.ai.edge.litert:litert:1.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     testImplementation("junit:junit:4.13.2")

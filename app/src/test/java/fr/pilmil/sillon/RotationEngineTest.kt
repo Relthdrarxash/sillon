@@ -153,4 +153,25 @@ class RotationEngineTest {
         assertTrue("La case [0,0] doit avoir un conflit de rotation", slot00Issues.any { it.severity == RotationSeverity.CONFLICT_ERROR })
         assertTrue("La case [0,1] ne doit avoir aucun conflit majeur", slot01Issues.none { it.severity == RotationSeverity.CONFLICT_ERROR })
     }
+
+    @Test
+    fun testRotationDisabledForContainerBasedParcels() {
+        val history = listOf(
+            CropHistoryEntry("pot_1", 0, 0, 2025, BotanicalFamily.SOLANACEAE, "tomate"),
+        )
+        for (type in listOf(ParcelType.CONTAINER, ParcelType.WINDOWSILL, ParcelType.GROW_LIGHT_SHELF)) {
+            val parcel = Parcel(
+                id = "pot_1",
+                name = "Pot",
+                type = type,
+                rows = 1,
+                cols = 1,
+                containerVolumeLiters = 30,
+                slots = listOf(ParcelSlot(row = 0, col = 0, vegetableId = "tomate")),
+            )
+            assertTrue("Le type $type est en contenant", type.isContainerBased)
+            val issues = engine.evaluateParcel(parcel, targetYear = 2026, history = history)
+            assertTrue("Aucune alerte de rotation pluriannuelle sur un contenant ($type)", issues.isEmpty())
+        }
+    }
 }

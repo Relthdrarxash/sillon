@@ -22,6 +22,7 @@ import fr.pilmil.sillon.R
 import fr.pilmil.sillon.data.GardenRepository
 import fr.pilmil.sillon.data.SillonPrefs
 import fr.pilmil.sillon.engine.DashboardPlanner
+import fr.pilmil.sillon.model.todayLocalDate
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
@@ -73,7 +74,7 @@ class SowingReminderWorker(context: Context, params: WorkerParameters) : Corouti
     override suspend fun doWork(): Result {
         val context = applicationContext
         if (!SillonPrefs(context).sowingReminders || !SowingReminders.canNotify(context)) return Result.success()
-        val plan = DashboardPlanner.plan(GardenRepository(context).loadGarden(), LocalDate.now())
+        val plan = DashboardPlanner.plan(GardenRepository(context).loadGarden(), todayLocalDate())
         val names = (plan.sowIndoors + plan.sowOutdoors + plan.transplant).map { it.vegetable.name }.distinct()
         if (names.isEmpty()) return Result.success()
 

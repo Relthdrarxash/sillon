@@ -14,4 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Sillon"
 includeBuild("pilmil-core")
+include(":shared")
 include(":app")

@@ -10,6 +10,7 @@
   - Historique pluriannuel des cultures par emplacement avec alertes de rotation.
   - Conseils d'arrosage tenant compte du paillage et de la météo saisie (100 % hors-ligne).
   - Intégration de variétés anciennes et semences reproductibles dans le catalogue.
+  - Modes « Balcon » (pots, orientation, vent) et « Intérieur » (calendrier sans gelée, estimation de la lumière) pour les personnes en appartement — voir [`specs/balcon-interieur.md`](specs/balcon-interieur.md).
 - **v2.0 (horizon 2028, sous réserve de partenariat/financement)** :
   - Détection d'objets en direct caméra (type YOLO nano quantifié TFLite/ONNX) après constitution d'un jeu d'images annotées.
 
